@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<script>
+</script>
+{% endblock %}
+
+{% block title %}
+{{ super() }}
+Exercises
+{% endblock %}
+
+{% block body %}
+{{ super() }}
+
+<h2>Hello {{ session.user.first_name }}!</h2>
+<p>These are the classes you own:</p>
+
+{% for classroom in classroom_array %}
+  <li>
+    <b>{{ classroom.get_classroom_name() }}</b>
+    <br>
+    Latest homework set: {{ classroom.get_latest_set_and_next_due_homeworks() }}
+    <br>
+    Next homework due: {{ classroom.get_latest_set_and_next_due_homeworks() }}
+    <br>
+    Number of pupils: {{ classroom.get_number_of_pupils() }}
+  </li>
+{% endfor %}
+
+{% endblock %}
+
+{% block scripts_bottom %}
+  {{ super() }}
+  <script src="{{url_for('static', filename = 'js/login.js', _external=True)}}"></script>
+{% endblock %}
+

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<script>
+</script>
+{% endblock %}
+
+{% block title %}
+{{ super() }}
+Pupils
+{% endblock %}
+
+{% block body %}
+{{ super() }}
+
+<h2>Hello {{ session.user.first_name }}!</h2>
+<b>Pupil progress on {{submission_array[0].get_exercise_title_visible()}}</b><br><br>
+<div class='row'>
+    <b>
+    <div class="col-sm-2">
+      Name
+    </div>
+    <div class="col-sm-3">
+      Progress
+      </div>
+    <div class="col-sm-1">
+      Status
+      </div>
+    <div class="col-sm-1">
+      Score
+      </div>
+    <div class="col-sm-1">
+      Attempted
+      </div></b>
+  </div>
+{% for submission in submission_array %}
+  <div class='row'>
+    <div class="col-sm-2">
+            Pupil: {{ submission.get_pupil_name() }}
+    </div>
+    <div class="col-sm-3">
+      <!-- {{ submission.get_level_scores() }} --> <i>Coloured progress bar will go here</i>
+      </div>
+    <div class="col-sm-1">
+      {{ submission.get_status_display() }}
+      </div>
+    <div class="col-sm-1">
+      {{ submission.get_total_score() }}
+      </div>
+    <div class="col-sm-1">
+      {{ submission.get_percentage_attempted() }}
+      </div>
+  </div>
+{% endfor %}
+
+
+
+{% endblock %}
+
+{% block scripts_bottom %}
+  {{ super() }}
+  <script src="{{url_for('static', filename = 'js/login.js', _external=True)}}"></script>
+{% endblock %}
+

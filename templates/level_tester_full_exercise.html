@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<script>
+	var level_hash_list = {{level_hash_list|tojson}}
+	console.log("Got level_hash_list:", level_hash_list)
+	var progress_snapshot = {{progress_snapshot|tojson}}
+	console.log("Got progress_snapshot:", progress_snapshot)
+	var exercise_status = {{exercise_status|tojson}}
+	var question_attempts_required = {{question_attempts_required|tojson}}
+	var exercise_title_visible = {{exercise_title_visible|tojson}}
+	var exercise_description_visible = {{exercise_description_visible|tojson}}
+	var exercise_status = {{exercise_status|tojson}}
+	var homework_id = {{homework_id|tojson}}
+</script>
+{% endblock %}
+
+{% block title %}
+{{ super() }}
+Questions
+{% endblock %}
+
+{% block body %}
+{{ super() }}
+<div class='container'>
+  <h1>Level tester</h1>
+  	<div class="row">
+		<div class="col-sm-8">
+			<div id='optional_question_area'>
+				<div><strong id='optional_question_area_title'>Whole question:</strong></div>
+				<div><em id='optional_question_area_body'></em></div>
+			</div>
+			<br>
+			<div id='content_area'>
+				<div><strong id='content_area_title'>Let's break it down:</strong></div>
+				<!-- <img src= {{ url_for('static', filename = 'img/test.jpg') }}> -->
+				<div id='content_area_body'></div>
+			</div>
+			<br>
+			<div id='button_area'>
+				<button id='check_or_continue'>Check</button>
+				<button id='hint'>Hint</button>
+			</div>
+			<br>
+			<div id='commentary_area'>
+				<b><div id='commentary_line_1'></div></b>
+				<div id='commentary_line_2'></div>
+			</div>
+		</div>
+		<div class="col-sm-4" id='progress_area'>
+			
+			{% if exercise_status=='submission' %}
+		  		<i>This is the homework attempt (i.e. first time)<br></i>
+		  	{% elif exercise_status=='revision' %}
+		  		<button id='reset_revision'>
+		  			Back to start
+		  		</button><br>
+		  	{% endif %}
+
+			<br>
+			<b>To show:</b>
+			<p>Exercise name: <span id='progress_exercise_name'>NA</span></p>
+			<p>Questions correct (this homework): <span id='questions_correct_total_count'>0</span></p>
+			<p>Questions answered (this homework): <span id='questions_attempted_total_count'>0</span></p>
+			<br>
+			<p><small><b>Will be hidden:</b></small></p>			
+			<p><small>Current level number: <span id='progress_current_level'>NA</span></small></p>
+			<p><small>Current question: <span id='progress_current_question'>0</span></small></p>
+			<p><small>Questions correct (this level): <span id='questions_correct_level_count'>0</span></small></p>
+			<p><small>Questions correct required (this level): <span id='questions_correct_required'>Not yet checked</span></small></p>
+			<p><small>Questions incorrect (this level): <span id='questions_incorrect_level_count'>0</span></small></p>			
+			<small>Questions incorrect (this homework): <span id='questions_incorrect_total_count'>0</span></small></p>
+			<p><small>Question attempts required (this homework): <span id='question_attempts_required'>Not yet checked</span></small></p>
+		</div>
+	</div>
+</div> <!-- end of container --> 
+
+{% endblock %}
+
+{% block scripts_bottom %}
+	{{ super() }}
+	<script src="{{url_for('static', filename = 'js/level_tester_full_exercise.js', _external=True)}}"></script>
+{% endblock %}
+

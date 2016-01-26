@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% block head %}
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+      <title>
+        {% block title %}   
+        MAFFS     
+        {% endblock %}
+      </title>
+
+      <!-- Bootstrap and my own themes -->
+      <link href="{{url_for('static', filename = 'css/bootstrap.css')}}" rel="stylesheet">
+
+      {% block scripts_top %}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <!--<script src="{{url_for('static', filename = 'js/jquery-2.1.1.min.js', _external=True)}}"></script>-->
+        
+      {% endblock %}
+
+    {% endblock %}
+  </head>
+  <body>
+    
+    {% block body %}
+    <div class="row">
+    {% if session.user %}
+    
+      {% if session.user.is_teacher %}
+      <div class="col-sm-1">
+        <a href={{ url_for('teacher_all_exercises') }}>Exercises set</a>
+      </div>
+      <div class="col-sm-1">
+        <a href={{ url_for('teacher_all_classes') }}>Classes</a>
+      </div>
+      <div class="col-sm-1">
+        <a href={{ url_for('teacher_all_pupils') }}>Pupils</a>      
+      </div>
+      <div class="col-sm-1">
+        <a href={{ url_for('logout') }}>Logout</a>      
+      </div>
+      {% endif %} <!-- if teacher -->
+
+      {% if not session.user.is_teacher %}
+      <div class="col-sm-1">
+        <a href={{ url_for('pupil_all_exercises') }}>Exercises set</a>
+      </div>
+      <div class="col-sm-1">
+        <a href={{ url_for('logout') }}>Logout</a>      
+      </div>
+      {% endif %} <!-- if teacher -->
+
+    {% endif %}  <!-- if User -->
+
+    </div>
+
+
+    {% endblock %}    
+
+    {% block scripts_bottom %}
+      <script src="{{url_for('static', filename = 'js/bootstrap.min.js', _external=True)}}"></script>
+    {% endblock %}
+  </body>
+</html>

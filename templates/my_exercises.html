@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<script>
+</script>
+{% endblock %}
+
+{% block title %}
+{{ super() }}
+Exercises
+{% endblock %}
+
+{% block body %}
+{{ super() }}
+
+<h2>Hello {{ session.user.first_name }}!</h2>
+<p>These are your exercises:</p>
+
+{% for submission in submission_array %}
+  <li>
+    <a href={{ submission.get_href() }}>
+      {{ submission.get_exercise_title_visible() }}
+    </a>
+    <br>
+    {{ submission.get_exercise_description_visible() }}
+    <br>
+    Status = {{ submission.get_status_display() }}
+    <br>
+    Date set = {{ submission.get_date_set() }}
+    <br>
+    Date due = {{ submission.get_date_due() }}
+    <br>
+    Percent of hmwk complete = {{ submission.get_percentage_attempted()*100 }}%
+    <br>
+    Percent correct = {{ submission.get_total_score()*100 }}%
+  </li>
+{% endfor %}
+
+{% endblock %}
+
+{% block scripts_bottom %}
+  {{ super() }}
+  <script src="{{url_for('static', filename = 'js/login.js', _external=True)}}"></script>
+{% endblock %}
+

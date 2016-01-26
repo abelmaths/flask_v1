@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<script>
+</script>
+{% endblock %}
+
+{% block title %}
+{{ super() }}
+Exercises
+{% endblock %}
+
+{% block body %}
+{{ super() }}
+
+<h2>Hello {{ session.user.first_name }}!</h2>
+<p>These are the homeworks you have set:</p>
+
+{% for homework in homework_array %}
+  <li>
+    <b>{{ homework.get_exercise_title_visible() }}</b>
+    <br>
+    {{ homework.get_exercise_description_visible() }}
+    <br>
+    Date due: {{ homework.get_date_due() }}
+    <br>
+    Date set: {{ homework.get_date_set() }}
+    <br>
+    Class: {{ homework.get_classroom_name() }}
+    <br>
+    Status columns: {{ homework.get_status_count() }}
+    <br>
+    <a href={{url_for('teacher_exercise_progress', homework_id = homework.get_id())}}>See pupil progress</a>
+  </li>
+{% endfor %}
+
+{% endblock %}
+
+{% block scripts_bottom %}
+  {{ super() }}
+  <script src="{{url_for('static', filename = 'js/login.js', _external=True)}}"></script>
+{% endblock %}
+

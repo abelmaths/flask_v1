@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block title %}
+{{ super() }}
+Questions
+{% endblock %}
+
+{% block body %}
+{{ super() }}
+
+<div class='centered-page'>
+
+	<!--{% include 'navbar.html' %}-->
+
+	<div class='container-fluid'>
+		<div>
+			<h2>Trig trig</h2>
+			<div>
+				Question goes here, write an answer then click 
+					<a href='#' id='submit_answer' class='button' >
+						Continue
+					</a>
+					<input type="text" name="namey" id='the_answer' placeholder='Your answer' /required>
+			</div>
+		</div>
+	</div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts_bottom %}
+	{{ super() }}
+	<script src="{{url_for('static', filename = 'js/maffs.js', _external=True)}}"></script>
+{% endblock %}

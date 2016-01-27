@@ -279,10 +279,21 @@ def testy():
 @app.route('/_login_attempt', methods=['GET', 'POST'])
 def login_attempt():
     username = request.json['username']
-    # TODO: Here we will check username and password etc.
+    password = request.json['password']
+    
+    # Check username and password etc.
     USER = mongo.load_by_username(username)
-    session['user'] = USER.save_to_session()
-    return json.dumps({'status':1, 'data':None})
+    if USER.exists():
+        password_check_ok = USER.check_password(password)
+        if password_check_ok:
+            session['user'] = USER.save_to_session()
+            return json.dumps({'status':1, 'data':None})
+        else:
+            USER = {}
+            session.clear()
+            return json.dumps({'status':0, 'data':'Password does not match'})
+    else:
+        return json.dumps({'status':0, 'data':'Username does not exist'})
 
 @app.route('/_get_level_blob', methods=['GET', 'POST'])
 def get_level_blob():

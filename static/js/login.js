@@ -1,14 +1,18 @@
 $('button#login').click( function() {
 	var username = $('input#username').val()
-	attempt_login(username)
+  var password = $('input#password').val()
+  console.log(username)
+  console.log(password)
+	attempt_login(username, password)
 })
 
-function attempt_login(username) {
+function attempt_login(username, password) {
 	// Attempts a login via AJAX
 	$.ajax( {
       url: '/_login_attempt',
       data: JSON.stringify ({
-        'username':username
+        'username':username,
+        'password':password,
       }, null, '\t'),
       contentType: 'application/json;charset=UTF-8',
       type: "POST",
@@ -21,7 +25,7 @@ function attempt_login(username) {
         	window.location.href = '/my_exercises'
         }
         else {
-          alert("Could not log in.")
+          alert(data)
         }
       },
       fail: function() {

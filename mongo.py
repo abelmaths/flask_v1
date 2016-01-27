@@ -27,7 +27,7 @@ When you come back to the homework after a break, it should be able to load the 
 # Load the general setup gump
 from mongo_setup import *
 #from mongo_general import *
-run_demo = True
+run_demo = False
 
 
 #################### CLASSES ####################
@@ -46,6 +46,15 @@ class User:
 			return str(self.D.get('_id'))
 		else:
 			return ObjectId(self.D.get('_id'))
+
+	def exists(self):
+		"""
+		Returns true if any data exists within this user
+		"""
+		if self.D:
+			return True
+		else:
+			return False
 
 	def set_surname(self, new_name):	
 		"""
@@ -67,6 +76,15 @@ class User:
 		Return the display name (full name for pupils, Title Surname for teachers)
 		"""
 		return self.D.get('display_name')
+
+	def check_password(self, password_attempt):
+		"""
+		Return true if attempt matches known password
+		"""
+		from werkzeug.security import check_password_hash
+		from werkzeug.security import generate_password_hash
+		known_password_hash = self.D.get('password_hash')
+		return check_password_hash(str(known_password_hash), str(password_attempt))
 
 	def is_teacher(self):
 		"""
@@ -913,7 +931,7 @@ def create_classroom(teacher_object, subject_name, yeargroup_name):
 	_ = save_object(classroom, collection_name = 'classrooms')
 	return _.inserted_id, classroom.get_entry_code()
 
-def create_user(username, first_name, surname, display_name, is_teacher):
+def create_user(username, first_name, surname, display_name, password_hash, is_teacher):
 	"""
 	Create a new user object
 	"""
@@ -923,6 +941,7 @@ def create_user(username, first_name, surname, display_name, is_teacher):
 			'display_name':'',  # Pupils can't change, teachers can
 			'first_name':first_name,
 			'surname':surname,
+			'password_hash':password_hash,
 			'classrooms':[],
 			'homeworks':{},
 			'is_teacher':is_teacher
@@ -1002,17 +1021,19 @@ if __name__ == "__main__":
 		db['submissions'].remove()
 
 		# Create some pupils
-		create_user('davidabelman', 'David', 'Abelman', display_name = None, is_teacher=False)
-		create_user('tonyblair', 'Tony', 'Blair', display_name = None, is_teacher=False)
-		create_user('adamguy', 'Adam', 'Guy', display_name = None, is_teacher=False)
-		create_user('woodylewenstein', 'Woody', 'Lewenstein', display_name = None, is_teacher=False)
-		create_user('annieabelman', 'Annie', 'Abelman', display_name = None, is_teacher=False)
-		create_user('anniehughes', 'Annie', 'Hughes', display_name = None, is_teacher=False)
-		create_user('benabelman', 'Ben', 'Abelman', display_name = None, is_teacher=False)
+		from werkzeug.security import generate_password_hash
+		password_hash = generate_password_hash('123')
+		create_user('davidabelman', 'David', 'Abelman', password_hash=password_hash, display_name = None, is_teacher=False)
+		create_user('tonyblair', 'Tony', 'Blair', password_hash=password_hash, display_name = None, is_teacher=False)
+		create_user('adamguy', 'Adam', 'Guy', password_hash=password_hash, display_name = None, is_teacher=False)
+		create_user('woodylewenstein', 'Woody', 'Lewenstein', password_hash=password_hash, display_name = None, is_teacher=False)
+		create_user('annieabelman', 'Annie', 'Abelman', password_hash=password_hash, display_name = None, is_teacher=False)
+		create_user('anniehughes', 'Annie', 'Hughes', password_hash=password_hash, display_name = None, is_teacher=False)
+		create_user('benabelman', 'Ben', 'Abelman', password_hash=password_hash, display_name = None, is_teacher=False)
 
 		# Create some teachers
-		create_user('dennehy1234', 'A', 'Dennehy', display_name = 'Miss Dennehy', is_teacher=True)
-		create_user('asher999', 'Tony', 'Asher', display_name = 'Sir Asher', is_teacher=True)
+		create_user('dennehy1234', 'A', 'Dennehy', password_hash=password_hash, display_name = 'Miss Dennehy', is_teacher=True)
+		create_user('asher999', 'Tony', 'Asher', password_hash=password_hash, display_name = 'Sir Asher', is_teacher=True)
 
 		# Make teacher create a class each
 		_id_class1, entry_code_1 = create_classroom(

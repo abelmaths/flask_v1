@@ -139,6 +139,8 @@ def teacher_all_pupils():
     if not USER.is_teacher():
         return redirect(url_for('pupil_all_exercises'))
 
+    # my_classes = mongo.
+
     return "Will show list of all pupils here. Need to consider how to deal with pupils in 2 classes by same teacher."
 
 @app.route('/instructor/my_classes')

@@ -6,6 +6,7 @@ dulwich==0.9.5
 facebookads==2.5.1
 fbhgext==0.1.0
 Flask==0.10.1
+gunicorn==19.4.5
 hg-evolve==5.1.1
 hg-git==0.8.4
 hg-remotenames==1.0.0

@@ -15,6 +15,7 @@ from flask import Flask, url_for, render_template, request, session, redirect
 import json
 import mongo
 import os
+from functools import wraps
 reload(mongo)
 from mongo_setup import *
 from bson.objectid import ObjectId
@@ -35,12 +36,22 @@ def debug(argument):
 def before_request():
     # If we have a user in session variable, create user object
     global USER
+    # User object with populated or empty dict depending if any logged in
     USER = mongo.User(session.get('user', {}))
     USER.print_to_console()
 
+def login_required(function_to_protect):
+    @wraps(function_to_protect)
+    def wrapper(*args, **kwargs):
+        if USER.exists():  # i.e. an actual user is loaded within session cookie courtesy of before_request()
+            return function_to_protect(*args, **kwargs)
+        else:   # no user loaded, go to some non-logged in page
+            return redirect(url_for('login'))
+    return wrapper
+
 @app.route('/')
 def home():
-    if not USER:
+    if not USER.exists():
         return redirect(url_for('login'))
     if USER.is_teacher():
         return redirect(url_for('teacher_all_exercises'))
@@ -64,7 +75,9 @@ def create_teacher():
     \ncreate_user(username, first_name, surname, display_name, is_teacher)
     """
 
+
 @app.route('/instructor/create_classroom')
+@login_required
 def create_classroom():
     return """
     Page for a logged in teacher to create a classroom
@@ -75,6 +88,7 @@ def create_classroom():
     """
 
 @app.route('/instructor/set_exercise')
+@login_required
 def set_exercise():
     return """
     Page for a logged in teacher to create an exercise/homework
@@ -108,6 +122,7 @@ def logout():
     return render_template('login.html')
 
 @app.route('/join_classroom')
+@login_required
 def join_classroom():
     return """
     Page for a pupil to join additional classrooms
@@ -115,6 +130,7 @@ def join_classroom():
     """
 
 @app.route('/instructor/my_exercises')
+@login_required
 def teacher_all_exercises():
     """
     Show grid of all exercises (old and new and due)
@@ -130,6 +146,7 @@ def teacher_all_exercises():
 
 
 @app.route('/instructor/my_students')
+@login_required
 def teacher_all_pupils():
     """
     Show grid of all students
@@ -144,6 +161,7 @@ def teacher_all_pupils():
     return "Will show list of all pupils here. Need to consider how to deal with pupils in 2 classes by same teacher."
 
 @app.route('/instructor/my_classes')
+@login_required
 def teacher_all_classes():
     """
     Show grid of all classes
@@ -157,6 +175,7 @@ def teacher_all_classes():
     return render_template('instructor_classrooms.html', classroom_array = classrooms, USER=USER)
 
 @app.route('/instructor/exercise/<homework_id>')
+@login_required
 def teacher_exercise_progress(homework_id):
     """
     Show all pupils and their progress on the exercise
@@ -167,12 +186,14 @@ def teacher_exercise_progress(homework_id):
     return render_template('instructor_pupils_in_homework.html', submission_array = submissions, USER=USER)
 
 @app.route('/instructor/exercise_preview/<id>')
+@login_required
 def teacher_exercise_preview():
     return """
     Preview of 1 question per level on the exercise
     """
 
 @app.route('/instructor/student/<username>')
+@login_required
 def teacher_pupil_progress():
     return """
     (Lower priority)
@@ -183,6 +204,7 @@ def teacher_pupil_progress():
     """
 
 @app.route('/my_exercises')
+@login_required
 def pupil_all_exercises():
     """
     Table (or nicer format) if all exercises done and to do
@@ -198,16 +220,19 @@ def pupil_all_exercises():
     return render_template('my_exercises.html', submission_array = submissions, USER=USER)
 
 @app.route('/my_progress')
+@login_required
 def pupil_progress():
     return """
     My progress - topline stats, questions attempted/answered, a chart, medals
     """
 
 @app.route('/exercise_tester')
+@login_required
 def exercise_tester():
     return render_template('level_tester_full_exercise.html', USER=USER)
 
 @app.route('/exercise/<homework_id>')
+@login_required
 def exercise(homework_id):
     """
     Load the exercise (by homework id)
@@ -252,12 +277,14 @@ def exercise(homework_id):
         USER=USER)
 
 @app.route('/password_reset')
+@login_required
 def password_reset():
     return """
     Teacher can reset a student's password
     """
 
 @app.route('/password_change')
+@login_required
 def password_change():
     return """
     Teacher or pupil can change their own password
@@ -266,15 +293,6 @@ def password_change():
 @app.route('/hello')
 def hello(name=None):
     return render_template('hello.html', name=name, USER=USER)
-
-@app.route('/questions')
-def questions():
-    import exercise_logic as Q    
-    return render_template('questions.html', USER=USER)
-
-@app.route('/testy')
-def testy():
-    return "user = {}".format(USER)
 
 @app.route('/_login_attempt', methods=['GET', 'POST'])
 def login_attempt():

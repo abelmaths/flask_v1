@@ -17,16 +17,47 @@ Exercises
 <h2>Hello {{ session.user.first_name }}!</h2>
 <p>These are the classes you own:</p>
 
+<div class='row'>
+    <b>
+    <div class="col-sm-2">
+      Class
+    </div>
+    <div class="col-sm-1">
+      Pupils
+    </div>
+    <div class="col-sm-1">
+      Latest set
+    </div>
+    <div class="col-sm-1">
+      Next due
+    </div>
+    <div class="col-sm-3">
+      Options
+    </div>
+    </b>
+</div>
+
 {% for classroom in classroom_array %}
-  <li>
-    <b>{{ classroom.get_classroom_name() }}</b>
-    <br>
-    Latest homework set: {{ classroom.get_latest_set_and_next_due_homeworks() }}
-    <br>
-    Next homework due: {{ classroom.get_latest_set_and_next_due_homeworks() }}
-    <br>
-    Number of pupils: {{ classroom.get_number_of_pupils() }}
-  </li>
+  <div class='row'>
+    <div class="col-sm-2">
+      {{ classroom.get_classroom_name() }}
+    </div>
+    <div class="col-sm-1">
+      {{ classroom.get_number_of_pupils() }}
+    </div>
+    <div class="col-sm-1">
+      {{ classroom.get_latest_set_and_next_due_homeworks() }}
+    </div>
+    <div class="col-sm-1">
+      {{ classroom.get_latest_set_and_next_due_homeworks() }}
+    </div>
+    <div class="col-sm-3">
+      <a href='my_students'>See pupils<br></a>
+      <a href='my_exercises'>See homeworks<br></a>
+      <a href='set_exercise'>Set homework<br></a>
+    </div>
+  </div>
+    
 {% endfor %}
 
 {% endblock %}

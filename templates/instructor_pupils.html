@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<script>
+</script>
+{% endblock %}
+
+{% block title %}
+{{ super() }}
+Pupils
+{% endblock %}
+
+{% block body %}
+{{ super() }}
+
+<h2>Hello {{ session.user.first_name }}!</h2>
+<b>These are all of your pupils:</b><br><br>
+<div class='row'>
+    <b>
+    <div class="col-sm-2">
+      Name
+    </div>
+    <div class="col-sm-6">
+      Classes
+    </div>
+    <div class="col-sm-2">
+      Options
+    </div>
+    </b>
+  </div>
+{% for pupil_id in pupil_dict %}
+  <div class='row'>
+    <div class="col-sm-2">
+      {{ pupil_dict[pupil_id]['display_name'] }}
+    </div>
+    <div class="col-sm-6">
+      {{ pupil_dict[pupil_id]['classrooms'] }}
+    </div>
+    <div class="col-sm-2">
+      <a href={{url_for('teacher_pupil_progress', pupil_id = pupil_id)}}>See pupil progress</a>
+    </div>
+  </div>
+{% endfor %}
+
+{% endblock %}
+
+{% block scripts_bottom %}
+  {{ super() }}
+  <script src="{{url_for('static', filename = 'js/login.js', _external=True)}}"></script>
+{% endblock %}
+

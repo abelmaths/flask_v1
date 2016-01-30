@@ -27,7 +27,7 @@ When you come back to the homework after a break, it should be able to load the 
 # Load the general setup gump
 from mongo_setup import *
 #from mongo_general import *
-run_demo = False
+run_demo = True
 
 
 #################### CLASSES ####################
@@ -97,6 +97,47 @@ class User:
 		Given a classroom object, add basic info to classrooms array
 		"""
 		self.D['classrooms'].append(classroom.get_basic_info())
+
+	def get_my_students_teacher(self):
+		"""
+		If teacher, get list of all students and their classes (TODO and their average marks?)
+		Unsure of best logic, but for now:
+			# Get teacher's classes
+    		# Get pupil list for each class
+    		# Do aggregation by pupil
+    	NB: we need to store latest pupil name in classroom object. If someone changes name, must update here.
+    	Returns {'5x3k1': {'classrooms': [u'Year 11 - Mechanics - Sir Asher', u'Year 12 - Stats - Sir Asher'], 'display_name': 'David Abelman'}, '12093isuh2':... }
+		"""
+		assert self.is_teacher(), "Can't get students for a pupil (needs to be teacher)"
+
+		# Get my classes
+		cursor = db.classrooms.find({'teacher_id':self.get_id()}, {'pupils':1, 'classroom_name':1})  # List of dicts, each with 'pupils' field
+
+		# Parse this
+		pupils = {}
+		for classroom in cursor:
+			classroom_name = classroom['classroom_name']
+			for pupil_minidict in classroom['pupils']:  # minidict = bson(id) and display_name
+				_id = str(pupil_minidict['_id'])
+				display_name = str(pupil_minidict['display_name'])
+				# Not come across pupil yet, add him/her
+				if _id not in pupils:
+					pupils[_id] = {
+						'display_name':display_name,
+						'classrooms':[classroom_name]
+					}
+				else:
+					# Add classroom name to list
+					pupils[_id]['classrooms'].append(classroom_name)
+		return pupils
+
+
+	def get_my_classes_teacher(self):
+		"""
+
+		"""
+		None
+
 
 	def add_homework(self, homework):
 		"""
@@ -285,6 +326,9 @@ class Homework:
 
 	def get_exercise_title_visible(self):
 		return self.D.get('exercise_title_visible')
+
+	def get_teacher_id(self):
+		return self.D.get('teacher_id')
 
 	def get_date_due(self):
 		return self.D.get('date_due')
@@ -827,6 +871,7 @@ def create_submission(pupil_id, pupil_name, homework_object, level_hash_list):
 			'exercise_name_unique':homework_object.get_exercise_name_unique(),
 			'exercise_title_visible':homework_object.get_exercise_title_visible(),
 			'exercise_description_visible':homework_object.get_exercise_description_visible(),
+			'teacher_id':homework_object.get_teacher_id(),
 			'level_hash_list':level_hash_list,
 			'status': 'not_started', #(not_started | in_progress | complete)
 			'progress_snapshot':0, # [2, 4, 3, 5, 1, 0, [7,2,6,1,5,4,3,8]] --> current_level, current_question, correct_total, incorrect_total, correct_level, incorrect_level, question_order
@@ -1046,6 +1091,11 @@ if __name__ == "__main__":
 			subject_name = 'Pure',
 			yeargroup_name = 'Year 11'
 			)
+		_id_class3, entry_code_3 = create_classroom(
+			teacher_object = load_by_username('asher999'),
+			subject_name = 'Stats',
+			yeargroup_name = 'Year 12'
+			)
 
 		# Pupils add themselves to classes
 		classroom_1 = load_by_id(_id_class1, 'classrooms')
@@ -1058,6 +1108,11 @@ if __name__ == "__main__":
 			pupil = load_by_username(u)
 			if pupil.D:
 				pupil_joins_classroom(pupil, classroom_2)
+		classroom_3 = load_by_id(_id_class3, 'classrooms')
+		for u in ['tonyblair', 'davidabelman', 'arong', 'annieabelman', 'adamguy']:
+			pupil = load_by_username(u)
+			if pupil.D:
+				pupil_joins_classroom(pupil, classroom_3)
 
 		# Teacher sets a homework
 		exercise_object = load_by_id(
@@ -1066,6 +1121,13 @@ if __name__ == "__main__":
 		classroom_object = load_by_id(_id_class1, 'classrooms')
 		teacher_object = load_by_username('asher999')
 		create_homework(exercise_object, classroom_object, teacher_object, date_due='2015-12-12')
+
+		exercise_object = load_by_id(
+			db['exercises'].find_one({'dict.exercise_name_unique':'angles180'})['_id'],
+			'exercises')
+		classroom_object = load_by_id(_id_class3, 'classrooms')
+		teacher_object = load_by_username('asher999')
+		create_homework(exercise_object, classroom_object, teacher_object, date_due='2016-01-10')
 
 	# Take a look at the databases!
 	for collection_name in ['users', 'classrooms', 'homeworks', 'exercises', 'submissions']:

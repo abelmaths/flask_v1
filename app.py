@@ -1,6 +1,6 @@
 """
 25th Jan - fix 'wrong answer' section (DONE), add 'answer limit' section (DONE), add basic image functionality (DONE), finish basic teacher/pupil views
-1st Feb - add password protection to login, look into date formats, get basic version on the web
+1st Feb - add password protection to login (DONE), look into date formats, get basic version on the web (DONE)
 8th Feb - 'create homework' page flow for teachers and 'create class' page flow for teachers
 15th Feb - add 'create account' / 'signup' / 'demo login' (TBC) functionality
 7th March - make it look pretty
@@ -156,9 +156,9 @@ def teacher_all_pupils():
     if not USER.is_teacher():
         return redirect(url_for('pupil_all_exercises'))
 
-    # my_classes = mongo.
-
-    return "Will show list of all pupils here. Need to consider how to deal with pupils in 2 classes by same teacher."
+    pupil_dict = USER.get_my_students_teacher()
+    print pupil_dict
+    return render_template('instructor_pupils.html', pupil_dict = pupil_dict)
 
 @app.route('/instructor/my_classes')
 @login_required
@@ -170,20 +170,27 @@ def teacher_all_classes():
     if not USER.is_teacher():
         return redirect(url_for('pupil_all_exercises'))
 
-    # Load all submission objects for the pupil
+    # Load all classrooms for teacher
     classrooms = mongo.load_by_arbitrary({'teacher_id':USER.get_id()}, 'classrooms', multiple=True)
-    return render_template('instructor_classrooms.html', classroom_array = classrooms, USER=USER)
+    return render_template('instructor_classrooms.html', classroom_array = classrooms)
 
-@app.route('/instructor/exercise/<homework_id>')
+@app.route('/instructor/submissions/exercise/<homework_id>')
 @login_required
 def teacher_exercise_progress(homework_id):
     """
     Show all pupils and their progress on the exercise
-    \nIf they own the exercise {}
     """
-    submissions = mongo.load_by_arbitrary({'homework_id':homework_id}, 'submissions', multiple=True)
-    print submissions
-    return render_template('instructor_pupils_in_homework.html', submission_array = submissions, USER=USER)
+    submissions = mongo.load_by_arbitrary({'teacher_id':USER.get_id(), 'homework_id':homework_id}, 'submissions', multiple=True)
+    return render_template('instructor_submissions.html', submission_array = submissions)
+
+@app.route('/instructor/submissions/student/<pupil_id>')
+@login_required
+def teacher_pupil_progress(pupil_id):
+    """
+    Show all exercise submissions for the pupil
+    """
+    submissions = mongo.load_by_arbitrary({'teacher_id':USER.get_id(), 'user_id':pupil_id}, 'submissions', multiple=True)
+    return render_template('instructor_submissions.html', submission_array = submissions)
 
 @app.route('/instructor/exercise_preview/<id>')
 @login_required
@@ -194,7 +201,7 @@ def teacher_exercise_preview():
 
 @app.route('/instructor/student/<username>')
 @login_required
-def teacher_pupil_progress():
+def teacher_pupil_summary():
     return """
     (Lower priority)
     \nShow a single pupil's history
@@ -217,7 +224,7 @@ def pupil_all_exercises():
 
     # Load all submission objects for the pupil
     submissions = mongo.load_by_arbitrary({'user_id':USER.get_id()}, 'submissions', multiple=True)
-    return render_template('my_exercises.html', submission_array = submissions, USER=USER)
+    return render_template('my_exercises.html', submission_array = submissions)
 
 @app.route('/my_progress')
 @login_required
@@ -229,7 +236,7 @@ def pupil_progress():
 @app.route('/exercise_tester')
 @login_required
 def exercise_tester():
-    return render_template('level_tester_full_exercise.html', USER=USER)
+    return render_template('level_tester_full_exercise.html')
 
 @app.route('/exercise/<homework_id>')
 @login_required
@@ -292,7 +299,7 @@ def password_change():
 
 @app.route('/hello')
 def hello(name=None):
-    return render_template('hello.html', name=name, USER=USER)
+    return render_template('hello.html', name=name)
 
 @app.route('/_login_attempt', methods=['GET', 'POST'])
 def login_attempt():

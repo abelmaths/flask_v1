@@ -8,68 +8,60 @@
 
 {% block title %}
 {{ super() }}
-Exercises
+Pupils
 {% endblock %}
 
 {% block body %}
 {{ super() }}
 
 <h2>Hello {{ session.user.first_name }}!</h2>
-<p>These are your exercises:</p>
-
+<b>Pupil progress on {{submission_array[0].get_exercise_title_visible()}}</b><br><br>
 <div class='row'>
     <b>
-    <div class="col-sm-1">
-      Exercise
-    </div>
     <div class="col-sm-2">
-      Description
+      Name
     </div>
+    <div class="col-sm-3">
+      Progress
+      </div>
     <div class="col-sm-1">
       Status
+      </div>
+    <div class="col-sm-1">
+      Score
     </div>
     <div class="col-sm-1">
-      Set
-    </div>
-    <div class="col-sm-1">
-      Due
-    </div>
-    <div class="col-sm-1">
-      Complete %
-    </div>
-    <div class="col-sm-1">
-      Correct % so far
-    </div></b>
-  </div>
-
-
-{% for submission in submission_array %}
-  <div class='row'>
-    <div class="col-sm-1">
-      <a href={{ submission.get_href() }}>
-        {{ submission.get_exercise_title_visible() }}
-      </a>
+      Attempted
     </div>
     <div class="col-sm-2">
-      {{ submission.get_exercise_description_visible() }}
+      Options
     </div>
+  </b>
+</div>
+{% for submission in submission_array %}
+  <div class='row'>
+    <div class="col-sm-2">
+            Pupil: {{ submission.get_pupil_name() }}
+    </div>
+    <div class="col-sm-3">
+      <!-- {{ submission.get_level_scores() }} --> <i>Coloured progress bar will go here</i>
+      </div>
     <div class="col-sm-1">
       {{ submission.get_status_display() }}
-    </div>
+      </div>
     <div class="col-sm-1">
-      {{ submission.get_date_set() }}
-    </div>
+      {{ submission.get_total_score() }}
+      </div>
     <div class="col-sm-1">
-      {{ submission.get_date_due() }}
+      {{ submission.get_percentage_attempted() }}
     </div>
-    <div class="col-sm-1">
-      {{ submission.get_percentage_attempted()*100 }}%
-    </div>
-    <div class="col-sm-1">
-      {{ submission.get_total_score()*100 }}%
+    <div class="col-sm-2">
+      <a href='/'>See pupil's attempt (TODO)</a>
     </div>
   </div>
 {% endfor %}
+
+
 
 {% endblock %}
 

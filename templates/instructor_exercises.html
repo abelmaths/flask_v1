@@ -17,22 +17,64 @@ Exercises
 <h2>Hello {{ session.user.first_name }}!</h2>
 <p>These are the homeworks you have set:</p>
 
+<div class='row'>
+    <b>
+    <div class="col-sm-1">
+      Exercise
+    </div>
+    <div class="col-sm-2">
+      Description
+    </div>
+    <div class="col-sm-1">
+      Class
+    </div>
+    <div class="col-sm-1">
+      Set
+    </div>
+    <div class="col-sm-1">
+      Due
+    </div>
+    <div class="col-sm-2">
+      Status
+    </div>
+    <div class="col-sm-3">
+      Options
+    </div>
+    </b>
+</div>
+
 {% for homework in homework_array %}
-  <li>
-    <b>{{ homework.get_exercise_title_visible() }}</b>
-    <br>
-    {{ homework.get_exercise_description_visible() }}
-    <br>
-    Date due: {{ homework.get_date_due() }}
-    <br>
-    Date set: {{ homework.get_date_set() }}
-    <br>
-    Class: {{ homework.get_classroom_name() }}
-    <br>
-    Status columns: {{ homework.get_status_count() }}
-    <br>
-    <a href={{url_for('teacher_exercise_progress', homework_id = homework.get_id())}}>See pupil progress</a>
-  </li>
+  <div class='row'>
+    <div class="col-sm-1">
+      {{ homework.get_exercise_title_visible() }}
+    </div>
+    
+    <div class="col-sm-2">
+      {{ homework.get_exercise_description_visible() }}
+    </div>
+    
+    <div class="col-sm-1">
+      {{ homework.get_classroom_name() }}
+    </div>
+
+    <div class="col-sm-1">
+      {{ homework.get_date_set() }}
+    </div>
+
+    <div class="col-sm-1">
+      {{ homework.get_date_due() }}
+    </div>
+
+    <div class="col-sm-2">
+      {{ homework.get_status_count() }}
+    </div>
+
+    <div class="col-sm-3">
+      <a href={{url_for('teacher_exercise_progress', homework_id = homework.get_id())}}>See pupil progress</a>
+      <a href='/'><br>Preview exercise (TODO)</a>
+    </div>
+
+  </div>
 {% endfor %}
 
 {% endblock %}

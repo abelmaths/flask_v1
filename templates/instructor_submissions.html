@@ -15,11 +15,19 @@ Pupils
 {{ super() }}
 
 <h2>Hello {{ session.user.first_name }}!</h2>
-<b>Pupil progress on {{submission_array[0].get_exercise_title_visible()}}</b><br><br>
+{% if format=='pupils' %}
+  Pupil progress on {{submission_array[0].get_exercise_title_visible()}}
+{% elif format=='exercises' %}
+  Exercises for pupil {{submission_array[0].get_pupil_name()}}
+{% endif %}
+<b></b><br><br>
 <div class='row'>
     <b>
-    <div class="col-sm-2">
-      Name
+    <div class="col-sm-1">
+      Pupil
+    </div>
+    <div class="col-sm-1">
+      Exercise
     </div>
     <div class="col-sm-3">
       Progress
@@ -40,8 +48,11 @@ Pupils
 </div>
 {% for submission in submission_array %}
   <div class='row'>
-    <div class="col-sm-2">
-            Pupil: {{ submission.get_pupil_name() }}
+    <div class="col-sm-1">
+      {{ submission.get_pupil_name() }}
+    </div>
+    <div class="col-sm-1">
+      {{ submission.get_exercise_title_visible() }}
     </div>
     <div class="col-sm-3">
       <!-- {{ submission.get_level_scores() }} --> <i>Coloured progress bar will go here</i>

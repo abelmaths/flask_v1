@@ -181,7 +181,7 @@ def teacher_exercise_progress(homework_id):
     Show all pupils and their progress on the exercise
     """
     submissions = mongo.load_by_arbitrary({'teacher_id':USER.get_id(), 'homework_id':homework_id}, 'submissions', multiple=True)
-    return render_template('instructor_submissions.html', submission_array = submissions)
+    return render_template('instructor_submissions.html', submission_array = submissions, format='pupils')
 
 @app.route('/instructor/submissions/student/<pupil_id>')
 @login_required
@@ -190,7 +190,7 @@ def teacher_pupil_progress(pupil_id):
     Show all exercise submissions for the pupil
     """
     submissions = mongo.load_by_arbitrary({'teacher_id':USER.get_id(), 'user_id':pupil_id}, 'submissions', multiple=True)
-    return render_template('instructor_submissions.html', submission_array = submissions)
+    return render_template('instructor_submissions.html', submission_array = submissions, format='exercises')
 
 @app.route('/instructor/exercise_preview/<id>')
 @login_required

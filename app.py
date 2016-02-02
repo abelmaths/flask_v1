@@ -1,6 +1,6 @@
 """
-25th Jan - fix 'wrong answer' section (DONE), add 'answer limit' section (DONE), add basic image functionality (DONE), finish basic teacher/pupil views
-1st Feb - add password protection to login (DONE), look into date formats, get basic version on the web (DONE)
+25th Jan - fix 'wrong answer' section (DONE), add 'answer limit' section (DONE), add basic image functionality (DONE), finish basic teacher/pupil views (DONE)
+1st Feb - add password protection to login (DONE), look into date formats, get basic version on the web (DONE), look into dynatable
 8th Feb - 'create homework' page flow for teachers and 'create class' page flow for teachers
 15th Feb - add 'create account' / 'signup' / 'demo login' (TBC) functionality
 7th March - make it look pretty
@@ -49,6 +49,24 @@ def login_required(function_to_protect):
             return redirect(url_for('login'))
     return wrapper
 
+def must_be_teacher(function_to_protect):
+    @wraps(function_to_protect)
+    def wrapper(*args, **kwargs):
+        if not USER.is_teacher():
+            return redirect(url_for('pupil_all_exercises'))
+        else:
+            return function_to_protect(*args, **kwargs)
+    return wrapper
+
+def must_be_pupil(function_to_protect):
+    @wraps(function_to_protect)
+    def wrapper(*args, **kwargs):
+        if USER.is_teacher():
+            return redirect(url_for('teacher_all_exercises'))
+        else:
+            return function_to_protect(*args, **kwargs)
+    return wrapper
+
 @app.route('/')
 def home():
     if not USER.exists():
@@ -78,23 +96,28 @@ def create_teacher():
 
 @app.route('/instructor/create_classroom')
 @login_required
+@must_be_teacher
 def create_classroom():
-    return """
+    """
     Page for a logged in teacher to create a classroom
-    \nGiven the entry code when done
-    \ncreate_classroom(
+    Given the entry code when done
+    create_classroom(
         teacher_object, subject_name, yeargroup_name
     )
     """
+    return render_template('instructor_create_classroom.html')
+
 
 @app.route('/instructor/set_exercise')
 @login_required
+@must_be_teacher
 def set_exercise():
-    return """
-    Page for a logged in teacher to create an exercise/homework
-    \nSelect their class and the subject
-    \ncreate_homework(exercise_object, classroom_object, teacher_object, date_due='2015-12-12')
     """
+    Page for a logged in teacher to create an exercise/homework
+    Select their class and the subject
+    create_homework(exercise_object, classroom_object, teacher_object, date_due='2015-12-12')
+    """
+    return render_template('instructor_set_exercise.html')
 
 @app.route('/signup')
 def create_pupil():
@@ -131,15 +154,12 @@ def join_classroom():
 
 @app.route('/instructor/my_exercises')
 @login_required
+@must_be_teacher
 def teacher_all_exercises():
     """
     Show grid of all exercises (old and new and due)
     Filterable
     """
-    # Redirect pupils to their own page
-    if not USER.is_teacher():
-        return redirect(url_for('pupil_all_exercises'))
-
     # Load all submission objects for the pupil
     homeworks = mongo.load_by_arbitrary({'teacher_id':USER.get_id()}, 'homeworks', multiple=True)
     return render_template('instructor_exercises.html', homework_array = homeworks, USER=USER)
@@ -147,29 +167,23 @@ def teacher_all_exercises():
 
 @app.route('/instructor/my_students')
 @login_required
+@must_be_teacher
 def teacher_all_pupils():
     """
     Show grid of all students
     \nFilterable (by class)
     """
-    # Redirect pupils
-    if not USER.is_teacher():
-        return redirect(url_for('pupil_all_exercises'))
-
     pupil_dict = USER.get_my_students_teacher()
     print pupil_dict
     return render_template('instructor_pupils.html', pupil_dict = pupil_dict)
 
 @app.route('/instructor/my_classes')
 @login_required
+@must_be_teacher
 def teacher_all_classes():
     """
     Show grid of all classes
     """
-    # Redirect pupils to their own page
-    if not USER.is_teacher():
-        return redirect(url_for('pupil_all_exercises'))
-
     # Load all classrooms for teacher
     classrooms = mongo.load_by_arbitrary({'teacher_id':USER.get_id()}, 'classrooms', multiple=True)
     return render_template('instructor_classrooms.html', classroom_array = classrooms)
@@ -212,16 +226,13 @@ def teacher_pupil_summary():
 
 @app.route('/my_exercises')
 @login_required
+@must_be_pupil
 def pupil_all_exercises():
     """
     Table (or nicer format) if all exercises done and to do
     \nTo do: can click (green) 'do exercise'
     \nDone: can click different button (blue) saying 'revisit'
     """
-    # Redirect teachers to their own page
-    if USER.is_teacher():
-        return redirect(url_for('teacher_all_exercises'))
-
     # Load all submission objects for the pupil
     submissions = mongo.load_by_arbitrary({'user_id':USER.get_id()}, 'submissions', multiple=True)
     return render_template('my_exercises.html', submission_array = submissions)

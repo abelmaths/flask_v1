@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<script>
+</script>
+{% endblock %}
+
+{% block title %}
+{{ super() }}
+Create classroom
+{% endblock %}
+
+{% block body %}
+{{ super() }}
+
+<h2>Hello {{ session.user.first_name }}!</h2>
+<p>Here we can set an exercise for a class</p>
+
+<br>
+<p>Select class:</p>
+<select>
+  <option value="volvo">Class 1</option>
+  <option value="saab">Class 2</option>
+</select>
+<a href='/'><small>Or create a new classroom</small></a>
+
+<br><br>
+<p>Select exercise:</p>
+<select>
+  <option value="volvo">Trigonometry</option>
+  <option value="saab">Adding</option>
+  <option value="mercedes">Subtracting</option>
+  <option value="audi">Something else</option>
+</select>
+<a href='/'><small>Preview exercise</small></a>
+ | 
+<a href='/'><small>Exercise explorer (coming soon)</small></a>
+
+<br><br>
+<p>Date set: <input type="date" id="date_set_input"></p>
+<!-- allow dates on non-chrome: http://code.tutsplus.com/tutorials/quick-tip-create-cross-browser-datepickers-in-minutes--net-20236 -->
+
+<br>
+<p>Date due: <input type="date" id="date_due_input"></p>
+
+<br>
+<div id='advanced_options'>
+	<b>Advanced options - include/exclude pupils</b>
+	<p>Include | Exclude</p>
+	<input type='input' placeholder='Type pupils names'></input>
+
+{% endblock %}
+
+{% block scripts_bottom %}
+  {{ super() }}
+  <script src="{{url_for('static', filename = 'js/login.js', _external=True)}}"></script>
+{% endblock %}
+

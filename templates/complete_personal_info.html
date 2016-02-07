@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<script>
+</script>
+{% endblock %}
+
+{% block title %}
+{{ super() }}
+Complete your personal info
+{% endblock %}
+
+{% block body %}
+{{ super() }}
+
+<div class='row' id='xx'>
+    <div class="col-sm-8">
+        <h2>
+          Complete your personal info
+        </h2>
+        <input id='firstname_input' placeholder='First name'></input>
+        <input id='surname_input' placeholder='Surname'></input>
+        <input id='display_name_input' placeholder='Display name (teachers only)'></input>
+        
+        <button id='submit_personal_info_button'>Let's get going!</button>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block scripts_bottom %}
+  {{ super() }}
+  <script src="{{url_for('static', filename = 'js/complete_personal_info.js', _external=True)}}"></script>
+{% endblock %}
+

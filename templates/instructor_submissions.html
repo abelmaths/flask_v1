@@ -14,7 +14,7 @@ Pupils
 {% block body %}
 {{ super() }}
 
-<h2>Hello {{ session.user.first_name }}!</h2>
+<h2>Hello {{ session.user.firstname }}!</h2>
 {% if format=='pupils' %}
   Pupil progress on {{submission_array[0].get_exercise_title_visible()}}
 {% elif format=='exercises' %}

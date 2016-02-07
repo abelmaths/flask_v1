@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<script>
+</script>
+{% endblock %}
+
+{% block title %}
+{{ super() }}
+Home
+{% endblock %}
+
+{% block body %}
+{{ super() }}
+
+<div class='row'>
+    <div class="col-sm-2">
+      <h3>
+        Login
+      </h3>      
+      <input id='login_username_input' placeholder='Username or email'></input>
+      <input id='login_password_input' type='password' placeholder='Password'></input>
+      <button id='login_button'>Login</button>
+    </div>
+</div>
+
+<div class='row' id='welcome_view'>
+    <div class="col-sm-8">
+      <h2>
+        Let's kick ass
+      </h2>
+      <button id='im_a_student_button'>I'm a student</button>
+      <button id='im_a_teacher_button'>I'm a teacher</button>
+      <button id='im_a_parent_button'>I'm a parent</button>
+    </div>
+</div>
+
+<div class='row initially-hidden' id='pupil_signup_view'>
+    <div class="col-sm-8">
+      <h2>
+        Which type of student account
+      </h2>
+      <div>
+        My teacher gave me a code: <input placeholder='Enter classroom code' id='signup_pupil_entry_code_input'></input> <button id='signup_pupil_entry_code_button'>Sign up</button>
+      </div>
+      <div>
+        <button id='signup_pupil_independent_button'>I don't have a code from my school, I just want a personal account</button>
+      </div>
+    </div>
+</div>
+
+<div class='row initially-hidden' id='teacher_signup_view'>
+    <div class="col-sm-8">
+      <h2>
+        Create a teacher's account
+      </h2>
+      <input id='signup_teacher_email_input' placeholder='Email'></input>
+      <input id='signup_teacher_password_input' type='password' placeholder='Password'></input>
+      <input id='signup_teacher_firstname_input' placeholder='First name (e.g. Jane)'></input><br>
+      <input id='signup_teacher_surname_input' placeholder='Surname (e.g. Smith)'></input><br>
+      <input id='signup_teacher_display_name_input' placeholder='Display name (e.g. Mrs Smith)'></input><br>
+      <button id='signup_teacher_signup_button'>Sign up</button>
+    </div>
+</div>
+
+<div class='row initially-hidden' id='parent_signup_view'>
+    <div class="col-sm-8">
+      <h2>
+        Information for parents and guardians
+      </h2>
+      Spiel goes here. There are 2 types of student accounts - those that are independent, and those that are connected to their school. <a href= {{url_for('signup_pupil_independent') }}>You or your child can click here to create an independent account.</a>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts_bottom %}
+  {{ super() }}
+  <script src="{{url_for('static', filename = 'js/entry.js', _external=True)}}"></script>
+{% endblock %}
+

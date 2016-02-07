@@ -14,7 +14,7 @@ Exercises
 {% block body %}
 {{ super() }}
 
-<h2>Hello {{ session.user.first_name }}!</h2>
+<h2>Hello {{ session.user.firstname }}!</h2>
 <p>These are your exercises:</p>
 
 <div class='row'>
@@ -75,6 +75,6 @@ Exercises
 
 {% block scripts_bottom %}
   {{ super() }}
-  <script src="{{url_for('static', filename = 'js/login.js', _external=True)}}"></script>
+  <script src="{{url_for('static', filename = 'js/TODO.js', _external=True)}}"></script>
 {% endblock %}
 

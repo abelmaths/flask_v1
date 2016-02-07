@@ -14,7 +14,7 @@ Exercises
 {% block body %}
 {{ super() }}
 
-<h2>Hello {{ session.user.first_name }}!</h2>
+<h2>Hello {{ session.user.firstname }}!</h2>
 <p>These are the homeworks you have set:</p>
 
 <div class='row'>
@@ -58,11 +58,11 @@ Exercises
     </div>
 
     <div class="col-sm-1">
-      {{ homework.get_date_set() }}
+      <span class='its-a-date'>{{ homework.get_date_set() }}</span>
     </div>
 
     <div class="col-sm-1">
-      {{ homework.get_date_due() }}
+      <span class='its-a-date'>{{ homework.get_date_due() }}</span>
     </div>
 
     <div class="col-sm-2">

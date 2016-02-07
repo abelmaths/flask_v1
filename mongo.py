@@ -26,8 +26,9 @@ When you come back to the homework after a break, it should be able to load the 
 
 # Load the general setup gump
 from mongo_setup import *
+from werkzeug.security import generate_password_hash
 #from mongo_general import *
-run_demo = True
+run_demo = False
 
 
 #################### CLASSES ####################
@@ -62,6 +63,12 @@ class User:
 		"""	
 		self.D['surname'] = new_name
 
+	def set_firstname(self, new_name):	
+		"""
+		Change the firstname. Note this doesn't affect display name.
+		"""	
+		self.D['firstname'] = new_name
+
 	def set_display_name(self, new_name):
 		"""
 		Teacher can choose their display name
@@ -69,13 +76,19 @@ class User:
 		if self.D.get('is_teacher'):
 			self.D['display_name'] = new_name
 		else:
-			self.D['display_name'] = '{} {}'.format(self.D.get('first_name'), self.D.get('surname'))
+			self.D['display_name'] = '{} {}'.format(self.D.get('firstname'), self.D.get('surname'))
 
 	def get_display_name(self):
 		"""
 		Return the display name (full name for pupils, Title Surname for teachers)
 		"""
 		return self.D.get('display_name')
+
+	def get_username(self):
+		"""
+		Return the username
+		"""
+		return self.D.get('username')
 
 	def check_password(self, password_attempt):
 		"""
@@ -134,10 +147,25 @@ class User:
 
 	def get_my_classes_teacher(self):
 		"""
-
+		If teacher, get list of all their classes
 		"""
-		None
+		assert self.is_teacher(), "Can't get classes for a pupil (needs to be teacher)"
 
+		cursor = db.classrooms.find({'teacher_id':self.get_id()}, {'classroom_name':1, 'subject_name':1, 'yeargroup_name':1})  # List of dicts, each with 'classroom_name' field
+		classrooms = []
+		for classroom in cursor:
+			classroom_name = classroom['classroom_name']
+			subject_name = classroom['subject_name']
+			yeargroup_name = classroom['yeargroup_name']
+			_id = str(classroom['_id'])
+			classrooms.append([_id, yeargroup_name, subject_name])
+		print classrooms
+
+		# Sort by yeargroup - subject
+		classrooms.sort(key=lambda x: str(x[1])+str(x[2]))
+		print classrooms
+
+		return classrooms
 
 	def add_homework(self, homework):
 		"""
@@ -219,7 +247,7 @@ class User:
 		Returns all info that is to be saved on the session cookie
 		"""
 		try:
-			keys = ['display_name', '_id', 'is_teacher', 'first_name', 'surname', 'username']
+			keys = ['display_name', '_id', 'is_teacher', 'firstname', 'surname', 'username']
 			# Need to make the _id a string
 			return {k : self.D[k] if k!='_id' else str(self.D[k]) for k in keys}		
 		except:
@@ -286,6 +314,12 @@ class Homework:
 		Change the due date
 		"""
 		self.D['date_due'] = date_due
+
+	def set_date_set(self, date_set):
+		"""
+		Change the set date
+		"""
+		self.D['date_set'] = date_set
 
 	def increment_homework(self, pupil_object, answer_data):
 		"""
@@ -442,6 +476,15 @@ class Classroom:
 		else:
 			return ObjectId(self.D.get('_id'))
 
+	def exists(self):
+		"""
+		Returns true if any data exists within this classroom
+		"""
+		if self.D:
+			return True
+		else:
+			return False
+
 	def set_entry_code(self, size=5, chars=string.ascii_uppercase):
 		entry_code = ''.join(random.choice(chars) for _ in range(size))
 		self.D['entry_code'] = entry_code
@@ -466,9 +509,23 @@ class Classroom:
 
 	def get_pupils(self):
 		"""
-		Return a list of all pupils in the classroom
+		Return a list of all pupils in the classroom (as mini dicts)
+		pupil_dict in pupil_list:
+			pupil_id = pupil_dict['_id']
+			pupil_name = pupil_dict['display_name']
 		"""
 		return self.D['pupils']
+
+	def check_if_pupil_in_class(self, check_id):
+		"""
+		Given a pupil, return True if in the class
+		"""
+		pupil_list = self.get_pupils()
+		for pupil_dict in pupil_list:
+			pupil_id = pupil_dict['_id']
+			if str(pupil_id) == str(check_id):
+				return True
+		return False
 
 	def add_homework(self, homework):
 		"""
@@ -517,6 +574,12 @@ class Classroom:
 		"""
 		return self.D.get('classroom_name')
 
+	def get_teacher_name(self):
+		"""
+		Return teacher name
+		"""
+		return self.D.get('teacher_name')
+
 	def get_latest_set_and_next_due_homeworks(self):
 		"""
 		Query homeworks to find the next due and latest set
@@ -528,6 +591,13 @@ class Classroom:
 		# homeworks = [x for x in cursor]
 		#TODO pull out the latest homework set and the next homework due, and return these
 		return "TODO"
+
+	def get_homework_ids(self):
+		"""
+		Get ID of each homework set historically
+		"""
+		homework_array = self.D.get('homeworks')
+		return [d['_id'] for d in homework_array]  # array of object IDs, not strings
 
 	def get_number_of_pupils(self):
 		"""
@@ -858,7 +928,7 @@ def load_submission(user_id, homework_id):
 	"""
 	return None
 
-def create_submission(pupil_id, pupil_name, homework_object, level_hash_list):
+def create_submission(pupil_id, pupil_name, homework_object): #, level_hash_list):
 	"""
 	Given a pupil and homework id, create a submission object
 	Add the level slots to keep track of answers
@@ -872,7 +942,7 @@ def create_submission(pupil_id, pupil_name, homework_object, level_hash_list):
 			'exercise_title_visible':homework_object.get_exercise_title_visible(),
 			'exercise_description_visible':homework_object.get_exercise_description_visible(),
 			'teacher_id':homework_object.get_teacher_id(),
-			'level_hash_list':level_hash_list,
+			'level_hash_list':homework_object.get_level_hashes(),
 			'status': 'not_started', #(not_started | in_progress | complete)
 			'progress_snapshot':0, # [2, 4, 3, 5, 1, 0, [7,2,6,1,5,4,3,8]] --> current_level, current_question, correct_total, incorrect_total, correct_level, incorrect_level, question_order
 			'date_set':homework_object.get_date_set(),
@@ -896,7 +966,7 @@ def get_level_by_hash(level_hash):
 	level_all = levels.find_one({'hash':level_hash})
 	return level_all['dict']
 
-def create_homework(exercise_object, classroom_object, teacher_object, date_due):
+def create_homework(exercise_object, classroom_object, teacher_object, date_set, date_due):
 	"""
 	Create a new homework, when it is set by the teacher
 	Create submissions for each pupil
@@ -922,6 +992,7 @@ def create_homework(exercise_object, classroom_object, teacher_object, date_due)
 				'date_due':''
 			}
 		)
+	homework.set_date_set(date_set)
 	homework.set_date_due(date_due)
 	
 	# Get all pupils in the class and add to homework
@@ -943,13 +1014,13 @@ def create_homework(exercise_object, classroom_object, teacher_object, date_due)
 
 	# Create a submission object for each pupil
 	pupil_list = classroom_object.get_pupils()
-	level_hash_list = exercise_object.get_level_hashes()
+	#level_hash_list = exercise_object.get_level_hashes()
 	homework_id = homework_id.inserted_id
 	homework_object = load_by_id(homework_id, 'homeworks')
 	for pupil_dict in pupil_list:
 		pupil_id = pupil_dict['_id']
 		pupil_name = pupil_dict['display_name']
-		create_submission(pupil_id, pupil_name, homework_object, level_hash_list)
+		create_submission(pupil_id, pupil_name, homework_object)  #, level_hash_list)
 
 def create_classroom(teacher_object, subject_name, yeargroup_name):
 	"""
@@ -976,7 +1047,7 @@ def create_classroom(teacher_object, subject_name, yeargroup_name):
 	_ = save_object(classroom, collection_name = 'classrooms')
 	return _.inserted_id, classroom.get_entry_code()
 
-def create_user(username, first_name, surname, display_name, password_hash, is_teacher):
+def create_user(username, firstname, surname, password, is_teacher, display_name=None, email=None, confirmed=False):
 	"""
 	Create a new user object
 	"""
@@ -984,9 +1055,10 @@ def create_user(username, first_name, surname, display_name, password_hash, is_t
 		{
 			'username':username,
 			'display_name':'',  # Pupils can't change, teachers can
-			'first_name':first_name,
+			'firstname':firstname,
 			'surname':surname,
-			'password_hash':password_hash,
+			'email':email,
+			'password_hash':generate_password_hash(password),
 			'classrooms':[],
 			'homeworks':{},
 			'is_teacher':is_teacher
@@ -1001,6 +1073,7 @@ def pupil_joins_classroom(pupil_object, classroom_object):
 	When a pupil joins a classroom:
 		- Add classroom to pupil's object
 		- Add pupil to classroom object
+		- Create submission object for all past homeworks
 	"""
 	classroom_object.add_pupil(pupil_object)
 	pupil_object.add_classroom(classroom_object)
@@ -1053,6 +1126,18 @@ def pupil_submits_answer(pupil_object, homework_object, answer_data):
 	save_object(homework_object, 'homeworks')
 
 	
+def get_all_exercises():
+	"""
+	Return all exercises that exist in database
+	For populating exercise lists etc.
+	Could make this a function within teacher, if different teachers can access different exercises?
+	Will also need to decide on output format at some point
+	"""
+	cursor = db.exercises.find({}, {'dict.exercise_title_visible':1})  # List of dicts, each with 'pupils' field
+	exercise_array = [x for x in cursor]
+	print exercise_array
+	return exercise_array
+
 
 ################# DEMO / TEST #################
 
@@ -1066,19 +1151,18 @@ if __name__ == "__main__":
 		db['submissions'].remove()
 
 		# Create some pupils
-		from werkzeug.security import generate_password_hash
-		password_hash = generate_password_hash('123')
-		create_user('davidabelman', 'David', 'Abelman', password_hash=password_hash, display_name = None, is_teacher=False)
-		create_user('tonyblair', 'Tony', 'Blair', password_hash=password_hash, display_name = None, is_teacher=False)
-		create_user('adamguy', 'Adam', 'Guy', password_hash=password_hash, display_name = None, is_teacher=False)
-		create_user('woodylewenstein', 'Woody', 'Lewenstein', password_hash=password_hash, display_name = None, is_teacher=False)
-		create_user('annieabelman', 'Annie', 'Abelman', password_hash=password_hash, display_name = None, is_teacher=False)
-		create_user('anniehughes', 'Annie', 'Hughes', password_hash=password_hash, display_name = None, is_teacher=False)
-		create_user('benabelman', 'Ben', 'Abelman', password_hash=password_hash, display_name = None, is_teacher=False)
+		password='123'
+		create_user('davidabelman', 'David', 'Abelman', password=password, display_name = None, is_teacher=False)
+		create_user('tonyblair', 'Tony', 'Blair', password=password, display_name = None, is_teacher=False)
+		create_user('adamguy', 'Adam', 'Guy', password=password, display_name = None, is_teacher=False)
+		create_user('woodylewenstein', 'Woody', 'Lewenstein', password=password, display_name = None, is_teacher=False)
+		create_user('annieabelman', 'Annie', 'Abelman', password=password, display_name = None, is_teacher=False)
+		create_user('anniehughes', 'Annie', 'Hughes', password=password, display_name = None, is_teacher=False)
+		create_user('benabelman', 'Ben', 'Abelman', password=password, display_name = None, is_teacher=False)
 
 		# Create some teachers
-		create_user('dennehy1234', 'A', 'Dennehy', password_hash=password_hash, display_name = 'Miss Dennehy', is_teacher=True)
-		create_user('asher999', 'Tony', 'Asher', password_hash=password_hash, display_name = 'Sir Asher', is_teacher=True)
+		create_user('dennehy1234', 'A', 'Dennehy', password=password, display_name = 'Miss Dennehy', is_teacher=True, email='davidabelman+dennehy1234@gmail.com')
+		create_user('asher999', 'Tony', 'Asher', password=password, display_name = 'Sir Asher', is_teacher=True, email='davidabelman+asher999@gmail.com')
 
 		# Make teacher create a class each
 		_id_class1, entry_code_1 = create_classroom(
@@ -1120,14 +1204,14 @@ if __name__ == "__main__":
 			'exercises')
 		classroom_object = load_by_id(_id_class1, 'classrooms')
 		teacher_object = load_by_username('asher999')
-		create_homework(exercise_object, classroom_object, teacher_object, date_due='2015-12-12')
+		create_homework(exercise_object, classroom_object, teacher_object, date_set='2015-11-11', date_due='2015-12-12')
 
 		exercise_object = load_by_id(
 			db['exercises'].find_one({'dict.exercise_name_unique':'angles180'})['_id'],
 			'exercises')
 		classroom_object = load_by_id(_id_class3, 'classrooms')
 		teacher_object = load_by_username('asher999')
-		create_homework(exercise_object, classroom_object, teacher_object, date_due='2016-01-10')
+		create_homework(exercise_object, classroom_object, teacher_object, date_set='2015-11-11', date_due='2016-01-10')
 
 	# Take a look at the databases!
 	for collection_name in ['users', 'classrooms', 'homeworks', 'exercises', 'submissions']:

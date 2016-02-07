@@ -14,7 +14,7 @@ Exercises
 {% block body %}
 {{ super() }}
 
-<h2>Hello {{ session.user.first_name }}!</h2>
+<h2>Hello {{ session.user.firstname }}!</h2>
 <p>These are the classes you own:</p>
 
 <div class='row'>
@@ -52,7 +52,7 @@ Exercises
       {{ classroom.get_latest_set_and_next_due_homeworks() }}
     </div>
     <div class="col-sm-3">
-      <a href='my_students'>See pupils<br></a>
+      <a href='my_pupils'>See pupils<br></a>
       <a href='my_exercises'>See homeworks<br></a>
       <a href='set_exercise'>Set homework<br></a>
     </div>

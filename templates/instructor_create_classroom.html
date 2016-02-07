@@ -14,19 +14,25 @@ Create classroom
 {% block body %}
 {{ super() }}
 
-<h2>Hello {{ session.user.first_name }}!</h2>
+<h2>Hello {{ session.user.firstname }}!</h2>
 <p>Here we can create a class. This will be a selection of pupils who you will want to regularly set homework for.</p>
-<b>Create a name for your class:</b>
-<p>Year or class name: <input id='class_name_input' type='text' placeholder='e.g. Year 9 Set 1'></p>
-<p>Subject: <input id='subject_input' type='text' placeholder='e.g. Maths'></p>
-<h3>
-  Class name:
-    <b>
-      <span id='class_name_preview'></span> - <span id='subject_preview'></span>
-    </b>
-</h3>
 
-<br><br><b>Congratulations, your class is created. Your students can join the class using code 'XXXXX'.</b>
+<div id='create_classroom_view'>
+	<b>Create a name for your class:</b>
+	<p>Year or class name: <input id='class_name_input' type='text' placeholder='e.g. Year 9 Set 1'></p>
+	<p>Subject: <input id='subject_input' type='text' placeholder='e.g. Maths'></p>
+	<h3>
+	  Class name:
+	    <b>
+	      <span id='class_name_preview'></span> - <span id='subject_preview'></span>
+	    </b>
+	</h3>
+	<button id='create_classroom_button'>Create class</button>
+</div>
+
+<div id='classroom_created_success_view' class='initially-hidden'>
+	<br><br><b>Congratulations, your class is created. Your students can join the class using code <span id='classroom_code'></span>.</b>
+</div>
 
 {% endblock %}
 

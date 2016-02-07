@@ -5,7 +5,7 @@
       <meta charset="utf-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <meta name="viewport" content="width=device-width, initial-scale=1">
-      <link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+      <!-- <link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'> -->
       <title>
         {% block title %}   
         MAFFS     
@@ -14,10 +14,11 @@
 
       <!-- Bootstrap and my own themes -->
       <link href="{{url_for('static', filename = 'css/bootstrap.css')}}" rel="stylesheet">
+      <link href="{{url_for('static', filename = 'css/base.css')}}" rel="stylesheet">
 
       {% block scripts_top %}
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-        <!--<script src="{{url_for('static', filename = 'js/jquery-2.1.1.min.js', _external=True)}}"></script>-->
+        <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>-->
+        <script src="{{url_for('static', filename = 'js/jquery-2.1.1.min.js', _external=True)}}"></script>
         
       {% endblock %}
 
@@ -26,6 +27,13 @@
   <body>
     
     {% block body %}
+
+    {% for message in get_flashed_messages() %}
+      <div class=flash>{{ message }}</div>
+    {% endfor %}
+
+    <button id='tester'>TEST SOMETHING</button>
+
     <div class="row">
     {% if session.user %}
     
@@ -45,9 +53,6 @@
       <div class="col-sm-1">
         <a href={{ url_for('set_exercise') }}>Set homework</a>      
       </div>
-      <div class="col-sm-1">
-        <a href={{ url_for('logout') }}>Logout</a>      
-      </div>
       {% endif %} <!-- if teacher -->
 
       {% if not session.user.is_teacher %}
@@ -55,19 +60,29 @@
         <a href={{ url_for('pupil_all_exercises') }}>Exercises set</a>
       </div>
       <div class="col-sm-1">
-        <a href={{ url_for('logout') }}>Logout</a>      
+        <a href={{ url_for('settings') }}>Join a class</a>
       </div>
       {% endif %} <!-- if teacher -->
+
+      <div class="col-sm-1">
+        <a href={{ url_for('settings') }}>Settings</a>
+      </div>
+      <div class="col-sm-1">
+        <a href={{ url_for('logout') }}>Logout</a>      
+      </div>
 
     {% endif %}  <!-- if User -->
 
     </div>
 
-
     {% endblock %}    
 
+    {{ flash_message }}
+
     {% block scripts_bottom %}
+      <script src="{{url_for('static', filename = 'js/moment.js', _external=True)}}"></script>
       <script src="{{url_for('static', filename = 'js/bootstrap.min.js', _external=True)}}"></script>
+      <script src="{{url_for('static', filename = 'js/base.js', _external=True)}}"></script>
     {% endblock %}
   </body>
 </html>

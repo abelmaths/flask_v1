@@ -23,58 +23,84 @@ Questions
 
 {% block body %}
 {{ super() }}
-<div class='container'>
-  <h1>Level tester</h1>
-  	<div class="row">
-		<div class="col-sm-8">
-			<div id='optional_question_area'>
-				<div><strong id='optional_question_area_title'>Whole question:</strong></div>
-				<div><em id='optional_question_area_body'></em></div>
+<div class='container box-shadow--8dp rounded-top-corners padding--40' id='exercise_main_container'>
+		
+		{% if False %}
+		<div class='row' id='exercise_header_row'>
+			<div class="col-sm-10">
+	  			<h3 id='exercise_title_visible'></h3>
+	  		</div>
+	  		<div class="col-sm-2">
+			  	{% if exercise_status=='submission' %}
+					Homework in progress
+				{% elif exercise_status=='revision' %}
+					<a id='reset_revision' href=''>Restart revision</a>
+				{% endif %}
 			</div>
-			<br>
-			<div id='content_area'>
-				<div><strong id='content_area_title'>Let's break it down:</strong></div>
-				<!-- <img src= {{ url_for('static', filename = 'img/test.jpg') }}> -->
-				<div id='content_area_body'></div>
+		</div>
+		{% endif %}
+	
+
+		{% if False %}
+	  	<div class="progress">
+		  <div class="progress-bar progress-bar-striped" role="progressbar"
+		  aria-valuenow="0.001" aria-valuemin="0" aria-valuemax="100" style="width:0%" id='progress_complete'>
+		  </div>
+		</div>
+		{% endif %}
+
+		{% if True %}
+		<div class="progress">
+		  <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" style="width:0%" id='progress_correct'> </div>
+		  <div class="progress-bar progress-bar-warning progress-bar-striped" role="progressbar" style="width:0%" id='progress_incorrect'> </div>
+		</div>
+		{% endif %}
+
+
+	  	<div class="row">
+				<div id='optional_question_area' class='col-sm-6' >
+					<div><strong id='optional_question_area_title'>Original question:</strong></div>
+					<div><em id='optional_question_area_body'></em></div>
+				</div>
+				<div id='content_area' class='col-sm-6'>
+					<div><strong id='content_area_title'>Let's break it down:</strong></div>
+					<div id='content_area_body'></div>
+				</div>
+		</div>
+
+			{% if False %}
+			<div id='progress_area'>
+				<br>
+				<b>To show:</b>
+				<p>Exercise name: <span id='progress_exercise_name'>NA</span></p>
+				<p>Questions correct (this homework): <span id='questions_correct_total_count'>0</span></p>
+				<p>Questions answered (this homework): <span id='questions_attempted_total_count'>0</span></p>
+				<br>
+				<p><small><b>Will be hidden:</b></small></p>			
+				<p><small>Current level number: <span id='progress_current_level'>NA</span></small></p>
+				<p><small>Current question: <span id='progress_current_question'>0</span></small></p>
+				<p><small>Questions correct (this level): <span id='questions_correct_level_count'>0</span></small></p>
+				<p><small>Questions correct required (this level): <span id='questions_correct_required'>Not yet checked</span></small></p>
+				<p><small>Questions incorrect (this level): <span id='questions_incorrect_level_count'>0</span></small></p>			
+				<small>Questions incorrect (this homework): <span id='questions_incorrect_total_count'>0</span></small></p>
+				<p><small>Question attempts required (this homework): <span id='question_attempts_required'>Not yet checked</span></small></p>
 			</div>
-			<br>
-			<div id='button_area'>
-				<button id='check_or_continue'>Check</button>
-				<button id='hint'>Hint</button>
-			</div>
-			<br>
-			<div id='commentary_area'>
-				<b><div id='commentary_line_1'></div></b>
+			{% endif %}
+		</div>
+</div> <!-- end of container --> 
+
+<div class='container box-shadow--8dp background-grey rounded-bottom-corners padding--20' id='commentary_and_button_container'>
+		<div class="row" id='commentary_and_button_row'>
+			<div id='commentary_area' class='col-sm-8'>
+				<b><div id='commentary_line_1' class="lead"></div></b>
 				<div id='commentary_line_2'></div>
 			</div>
-		</div>
-		<div class="col-sm-4" id='progress_area'>
-			
-			{% if exercise_status=='submission' %}
-		  		<i>This is the homework attempt (i.e. first time)<br></i>
-		  	{% elif exercise_status=='revision' %}
-		  		<button id='reset_revision'>
-		  			Back to start
-		  		</button><br>
-		  	{% endif %}
-
-			<br>
-			<b>To show:</b>
-			<p>Exercise name: <span id='progress_exercise_name'>NA</span></p>
-			<p>Questions correct (this homework): <span id='questions_correct_total_count'>0</span></p>
-			<p>Questions answered (this homework): <span id='questions_attempted_total_count'>0</span></p>
-			<br>
-			<p><small><b>Will be hidden:</b></small></p>			
-			<p><small>Current level number: <span id='progress_current_level'>NA</span></small></p>
-			<p><small>Current question: <span id='progress_current_question'>0</span></small></p>
-			<p><small>Questions correct (this level): <span id='questions_correct_level_count'>0</span></small></p>
-			<p><small>Questions correct required (this level): <span id='questions_correct_required'>Not yet checked</span></small></p>
-			<p><small>Questions incorrect (this level): <span id='questions_incorrect_level_count'>0</span></small></p>			
-			<small>Questions incorrect (this homework): <span id='questions_incorrect_total_count'>0</span></small></p>
-			<p><small>Question attempts required (this homework): <span id='question_attempts_required'>Not yet checked</span></small></p>
-		</div>
-	</div>
-</div> <!-- end of container --> 
+			<div id='button_area' class='col-sm-4'>
+				<button id='check_or_continue' class="btn btn-success pull-right margin-left--10">Check</button>
+				<button id='hint' class="btn btn-default pull-right">Hint</button>									
+			</div>
+		</div>  <!-- end commentary_and_button_area -->
+</div>
 
 {% endblock %}
 

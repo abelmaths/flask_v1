@@ -15,35 +15,40 @@ Sign up for an account
 {% block body %}
 {{ super() }}
 
-<div class='row'>
-    <div class="col-sm-2">
-      <h3>
-        Login
-      </h3>      
-      <input id='login_username_input' placeholder='Username or email'></input>
-      <input id='login_password_input' type='password' placeholder='Password'></input>
-      <button id='login_button'>Login</button>
-    </div>
-</div>
+<div class='container'>
+  {% include 'login_widget.html' %}
 
-<div class='row' id='xx'>
-    <div class="col-sm-8">
-      {% if entry_code %}
-        <h2>
-          Create an account to join your class
+  <div class='row' id='xx'>
+    
+    {% if entry_code %}
+    
+    <div class="col-xs-12">
+        <h2 class='text-center'>
+          Select an option:
         </h2>
-        <input id='signup_username_input' placeholder='Username (no @ symbol)'></input><br>
-        <input id='signup_password_input' type='password' placeholder='Password'></input><br>
-        <input id='signup_firstname_input' placeholder='First name'></input><br>
-        <input id='signup_surname_input' placeholder='Surname'></input><br>
-        <button id='signup_button'>Signup</button><br><br>
-        <button id='show_login_button'>I already have an account</button>
-      {% else %}
-        <h2>
-          Sorry, that entry code does not exist
-        </h2>
-      {% endif %}
+      </div>
+      <div class='col-sm-6  text-center'>
+          <h3>I already have an account</h3>
+          <button id='show_login_button' class='btn btn-info'>Login</button>
+      </div>
+      <div class='col-sm-6 text-center'>
+          <h3>I'm new, so I need to create an account</h3>
+          <input id='signup_username_input' placeholder='Username (no @ symbol)'></input><br>
+          <input id='signup_password_input' type='password' placeholder='Password'></input><br>
+          <input id='signup_firstname_input' placeholder='First name'></input><br>
+          <input id='signup_surname_input' placeholder='Surname'></input><br>
+          <button id='signup_button' class='btn btn-success margin-top--10'>Signup</button><br><br>
+      </div>
     </div>
+    
+    {% else %}
+      <div class="col-xs-12">
+          <h2>
+            Sorry, that entry code does not exist
+          </h2>
+      </div>
+    {% endif %}
+  
 </div>
 
 

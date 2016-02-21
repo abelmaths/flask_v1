@@ -90,3 +90,18 @@ $('#tester').click( function() {
 //     })  
 //  )
 
+function datatable_link(data) {
+    // See http://jsfiddle.net/rp0zw8rm/1/
+    // Within a datatable setup, call the following:
+    // { 
+    //     "data": "name_of_column",
+    //     "render" : function(data, type, row, meta){ return datatable_link(data) }
+    // }
+    // Must ensure that data is in the format 'name_of_column':{'text':'Jack A', 'url':'../12903701293'}
+    return $('<a>')
+        .attr('href', data['url'])
+        .text(data['text'])
+        .wrap('<div></div>')
+        .parent()
+        .html();
+}

@@ -868,7 +868,7 @@ class Submission:
 		for L in level_scores:
 			correct_count += level_scores[L]['correct_count']
 			incorrect_count += level_scores[L]['incorrect_count']
-		return correct_count*1.0 / (correct_count + incorrect_count) if correct_count + incorrect_count > 0 else 0
+		return correct_count*1.0 / (correct_count + incorrect_count) if correct_count + incorrect_count > 0 else ''
 
 	def get_percentage_attempted(self):
 		"""
@@ -879,7 +879,7 @@ class Submission:
 		questions_attempted = 0
 		for L in level_scores:
 			questions_attempted += (level_scores[L]['correct_count']+level_scores[L]['incorrect_count'])
-		return questions_attempted*1.0 / (question_attempts_required)
+		return questions_attempted*1.0 / (question_attempts_required) if questions_attempted > 0 else ''
 
 
 	def set_progress_snapshot(self, progress_snapshot):

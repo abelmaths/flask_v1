@@ -23,7 +23,7 @@ function bind_elements() {
 }
 
 function create_homework_success() {
-	alert("Yes!")
+	hide_body_and_redirect_with_flash('teacher_all_exercises', "The exercise has been set and can now be accessed by your pupils.")
 }
 
 bind_elements()

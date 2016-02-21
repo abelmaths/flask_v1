@@ -8,76 +8,40 @@
       <!-- <link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'> -->
       <title>
         {% block title %}   
-        MAFFS     
+        MAFFSTASTIC     
         {% endblock %}
       </title>
 
       <!-- Bootstrap and my own themes -->
       <link href="{{url_for('static', filename = 'css/bootstrap.css')}}" rel="stylesheet">
       <link href="{{url_for('static', filename = 'css/base.css')}}" rel="stylesheet">
+      <link href="{{url_for('static', filename = 'css/datatables/custom_datatables.css')}}" rel="stylesheet">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"> <!-- http://fortawesome.github.io/Font-Awesome/get-started/ -->
+      
 
       {% block scripts_top %}
         <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>-->
-        <script src="{{url_for('static', filename = 'js/jquery-2.1.1.min.js', _external=True)}}"></script>
-        
-      {% endblock %}
 
-    {% endblock %}
+        <script src="{{url_for('static', filename = 'js/jquery-2.1.1.min.js', _external=True)}}"></script>        
+        <!--<script src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script> --> 
+        <script src="{{url_for('static', filename = 'js/datatables/datatables.min.js', _external=True)}}"></script>        
+      {% endblock %}
+    {% endblock %} <!-- end head -->
   </head>
-  <body>
-    
+  
+  <body>    
     {% block body %}
 
-    {% for message in get_flashed_messages() %}
-      <div class=flash>{{ message }}</div>
-    {% endfor %}
+      <!-- Navbar -->
+      {% include "navbar.html" %}
 
-    <button id='tester'>TEST SOMETHING</button>
+      <!-- Flash messages -->
+      {% include "flash_messages.html" %}
 
-    <div class="row">
-    {% if session.user %}
-    
-      {% if session.user.is_teacher %}
-      <div class="col-sm-1">
-        <a href={{ url_for('teacher_all_exercises') }}>Exercises set</a>
-      </div>
-      <div class="col-sm-1">
-        <a href={{ url_for('teacher_all_classes') }}>Classes</a>
-      </div>
-      <div class="col-sm-1">
-        <a href={{ url_for('teacher_all_pupils') }}>Pupils</a>      
-      </div>
-      <div class="col-sm-1">
-        <a href={{ url_for('create_classroom') }}>Create class</a>      
-      </div>
-      <div class="col-sm-1">
-        <a href={{ url_for('set_exercise') }}>Set homework</a>      
-      </div>
-      {% endif %} <!-- if teacher -->
+      <!-- Testing button -->
+      <!-- <button type="button" class="btn btn-primary" id='tester'>TEST SOMETHING</button> -->
 
-      {% if not session.user.is_teacher %}
-      <div class="col-sm-1">
-        <a href={{ url_for('pupil_all_exercises') }}>Exercises set</a>
-      </div>
-      <div class="col-sm-1">
-        <a href={{ url_for('settings') }}>Join a class</a>
-      </div>
-      {% endif %} <!-- if teacher -->
-
-      <div class="col-sm-1">
-        <a href={{ url_for('settings') }}>Settings</a>
-      </div>
-      <div class="col-sm-1">
-        <a href={{ url_for('logout') }}>Logout</a>      
-      </div>
-
-    {% endif %}  <!-- if User -->
-
-    </div>
-
-    {% endblock %}    
-
-    {{ flash_message }}
+    {% endblock %} <!-- end body --> 
 
     {% block scripts_bottom %}
       <script src="{{url_for('static', filename = 'js/moment.js', _external=True)}}"></script>
@@ -85,4 +49,5 @@
       <script src="{{url_for('static', filename = 'js/base.js', _external=True)}}"></script>
     {% endblock %}
   </body>
+  
 </html>

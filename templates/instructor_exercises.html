@@ -3,6 +3,7 @@
 {% block head %}
 {{ super() }}
 <script>
+  var homework_data = {{homework_data|tojson}}
 </script>
 {% endblock %}
 
@@ -14,73 +15,27 @@ Exercises
 {% block body %}
 {{ super() }}
 
-<h2>Hello {{ session.user.firstname }}!</h2>
-<p>These are the homeworks you have set:</p>
-
-<div class='row'>
-    <b>
-    <div class="col-sm-1">
-      Exercise
-    </div>
-    <div class="col-sm-2">
-      Description
-    </div>
-    <div class="col-sm-1">
-      Class
-    </div>
-    <div class="col-sm-1">
-      Set
-    </div>
-    <div class="col-sm-1">
-      Due
-    </div>
-    <div class="col-sm-2">
-      Status
-    </div>
-    <div class="col-sm-3">
-      Options
-    </div>
-    </b>
+<div class='container'>
+  <table id="exercises">
+      <thead>
+          <tr>
+              <th>Exercise name</th>
+              <!-- <th>Description</th> -->
+              <th>Class</th>
+              <th>Date set</th>
+              <th>Date due</th>
+              <th>Status count</th>
+              <th></th>
+              <th></th>
+          </tr>
+      </thead>
+  </table>
 </div>
-
-{% for homework in homework_array %}
-  <div class='row'>
-    <div class="col-sm-1">
-      {{ homework.get_exercise_title_visible() }}
-    </div>
-    
-    <div class="col-sm-2">
-      {{ homework.get_exercise_description_visible() }}
-    </div>
-    
-    <div class="col-sm-1">
-      {{ homework.get_classroom_name() }}
-    </div>
-
-    <div class="col-sm-1">
-      <span class='its-a-date'>{{ homework.get_date_set() }}</span>
-    </div>
-
-    <div class="col-sm-1">
-      <span class='its-a-date'>{{ homework.get_date_due() }}</span>
-    </div>
-
-    <div class="col-sm-2">
-      {{ homework.get_status_count() }}
-    </div>
-
-    <div class="col-sm-3">
-      <a href={{url_for('teacher_exercise_progress', homework_id = homework.get_id())}}>See pupil progress</a>
-      <a href='/'><br>Preview exercise (TODO)</a>
-    </div>
-
-  </div>
-{% endfor %}
 
 {% endblock %}
 
 {% block scripts_bottom %}
   {{ super() }}
-  <script src="{{url_for('static', filename = 'js/login.js', _external=True)}}"></script>
+  <script src="{{url_for('static', filename = 'js/instructor_exercises.js', _external=True)}}"></script>
 {% endblock %}
 

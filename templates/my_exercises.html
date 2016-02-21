@@ -3,6 +3,7 @@
 {% block head %}
 {{ super() }}
 <script>
+  var submission_data = {{submission_data|tojson}}
 </script>
 {% endblock %}
 
@@ -14,67 +15,27 @@ Exercises
 {% block body %}
 {{ super() }}
 
-<h2>Hello {{ session.user.firstname }}!</h2>
-<p>These are your exercises:</p>
-
-<div class='row'>
-    <b>
-    <div class="col-sm-1">
-      Exercise
-    </div>
-    <div class="col-sm-2">
-      Description
-    </div>
-    <div class="col-sm-1">
-      Status
-    </div>
-    <div class="col-sm-1">
-      Set
-    </div>
-    <div class="col-sm-1">
-      Due
-    </div>
-    <div class="col-sm-1">
-      Complete %
-    </div>
-    <div class="col-sm-1">
-      Correct % so far
-    </div></b>
-  </div>
+<div class='container'>
+  <table id="submissions">
+      <thead>
+          <tr>
+              <th>Exercise</th>
+              <th>Description</th>
+              <th>Status</th>
+              <th>Score %</th>
+              <th>Attempted %</th>
+              <th>Date set</th>
+              <th>Date due</th>
+          </tr>
+      </thead>
+  </table>
+</div>
 
 
-{% for submission in submission_array %}
-  <div class='row'>
-    <div class="col-sm-1">
-      <a href={{ submission.get_href() }}>
-        {{ submission.get_exercise_title_visible() }}
-      </a>
-    </div>
-    <div class="col-sm-2">
-      {{ submission.get_exercise_description_visible() }}
-    </div>
-    <div class="col-sm-1">
-      {{ submission.get_status_display() }}
-    </div>
-    <div class="col-sm-1">
-      {{ submission.get_date_set() }}
-    </div>
-    <div class="col-sm-1">
-      {{ submission.get_date_due() }}
-    </div>
-    <div class="col-sm-1">
-      {{ submission.get_percentage_attempted()*100 }}%
-    </div>
-    <div class="col-sm-1">
-      {{ submission.get_total_score()*100 }}%
-    </div>
-  </div>
-{% endfor %}
-
-{% endblock %}
+{% endblock %} <!-- body block -->
 
 {% block scripts_bottom %}
   {{ super() }}
-  <script src="{{url_for('static', filename = 'js/TODO.js', _external=True)}}"></script>
+  <script src="{{url_for('static', filename = 'js/my_exercises.js', _external=True)}}"></script>
 {% endblock %}
 

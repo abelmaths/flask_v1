@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<script>
+</script>
+{% endblock %}
+
+{% block title %}
+{{ super() }}
+Settings
+{% endblock %}
+
+{% block body %}
+{{ super() }}
+
+<div class='container'>
+  <h2>Hello {{ session.user.firstname }}!</h2>
+  <p>Here you can change settings</p>
+</div>
+
+{% endblock %} <!-- body block -->
+
+{% block scripts_bottom %}
+  {{ super() }}
+  <script src="{{url_for('static', filename = 'js/TODO.js', _external=True)}}"></script>
+{% endblock %}
+

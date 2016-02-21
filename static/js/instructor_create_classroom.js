@@ -6,6 +6,10 @@ function bind_elements() {
 
 	// When classroom create attempt made, use AJAX and load success page
 	$('#create_classroom_button').click( function() {
+		// Disable the button from being pressed again
+		$('#create_classroom_button').prop('disabled', true);
+
+		// AJAX
 		variables = {
 			'class_name' : $('#class_name_input').val(),
 			'subject' : $('#subject_input').val()
@@ -14,7 +18,6 @@ function bind_elements() {
 			'/_create_classroom_submit',
 			variables,
 			create_classroom_success
-			//{'out':'#create_classroom_view', 'in':'#classroom_created_success_view'}
 		)
 	})
 }

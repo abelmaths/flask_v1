@@ -3,6 +3,7 @@
 {% block head %}
 {{ super() }}
 <script>
+  var submission_data = {{submission_data|tojson}}
 </script>
 {% endblock %}
 
@@ -14,70 +15,27 @@ Pupils
 {% block body %}
 {{ super() }}
 
-<h2>Hello {{ session.user.firstname }}!</h2>
-{% if format=='pupils' %}
-  Pupil progress on {{submission_array[0].get_exercise_title_visible()}}
-{% elif format=='exercises' %}
-  Exercises for pupil {{submission_array[0].get_pupil_name()}}
-{% endif %}
-<b></b><br><br>
-<div class='row'>
-    <b>
-    <div class="col-sm-1">
-      Pupil
-    </div>
-    <div class="col-sm-1">
-      Exercise
-    </div>
-    <div class="col-sm-3">
-      Progress
-      </div>
-    <div class="col-sm-1">
-      Status
-      </div>
-    <div class="col-sm-1">
-      Score
-    </div>
-    <div class="col-sm-1">
-      Attempted
-    </div>
-    <div class="col-sm-2">
-      Options
-    </div>
-  </b>
+<div class='container'>
+  <table id="submissions">
+      <thead>
+          <tr>
+              <th>Name</th>
+              <th>Exercise</th>
+              <th>Progress</th>
+              <th>Status</th>
+              <th>Correct %</th>
+              <th>Attempted %</th>
+              <th></th>
+          </tr>
+      </thead>
+  </table>
 </div>
-{% for submission in submission_array %}
-  <div class='row'>
-    <div class="col-sm-1">
-      {{ submission.get_pupil_name() }}
-    </div>
-    <div class="col-sm-1">
-      {{ submission.get_exercise_title_visible() }}
-    </div>
-    <div class="col-sm-3">
-      <!-- {{ submission.get_level_scores() }} --> <i>Coloured progress bar will go here</i>
-      </div>
-    <div class="col-sm-1">
-      {{ submission.get_status_display() }}
-      </div>
-    <div class="col-sm-1">
-      {{ submission.get_total_score() }}
-      </div>
-    <div class="col-sm-1">
-      {{ submission.get_percentage_attempted() }}
-    </div>
-    <div class="col-sm-2">
-      <a href='/'>See pupil's attempt (TODO)</a>
-    </div>
-  </div>
-{% endfor %}
-
 
 
 {% endblock %}
 
 {% block scripts_bottom %}
   {{ super() }}
-  <script src="{{url_for('static', filename = 'js/login.js', _external=True)}}"></script>
+  <script src="{{url_for('static', filename = 'js/instructor_submissions.js', _external=True)}}"></script>
 {% endblock %}
 

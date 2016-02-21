@@ -14,65 +14,80 @@ Create classroom
 {% block body %}
 {{ super() }}
 
-<h2>Hello {{ session.user.firstname }}!</h2>
-<p>Here we can set an exercise for a class</p>
 
-<br>
-<p>Select class:</p>
-<select id='classroom_id_select'>
-  {% for classroom_miniarray in classroom_array %}
-    <!-- value = classroom_id, then [1] and [2] are yeargroup and subject -->
-    <option value={{classroom_miniarray[0]}}>{{classroom_miniarray[1]}} - {{classroom_miniarray[2]}}</option>
-  {% endfor %}
-</select>
-<a href={{ url_for('create_classroom') }}><small>Or create a new classroom</small></a>
+<div class='container'>
+  <h3>Set an exercise</h3>
 
-<br><br>
-<p>Select exercise:</p>
-<select id='exercise_id_select'>
-  {% for exercise in exercise_array %}
-    <option value={{exercise['_id']}}>{{exercise['dict']['exercise_title_visible']}}</option>
-  {% endfor %}
-</select>
+  <div class='container box-shadow--8dp rounded-top-corners padding--20'>
+    <div id='TODO'>
+        
+        <div  class='margin--20'>
+          Select class:
+          <select id='classroom_id_select'>
+            {% for classroom_miniarray in classroom_array %}
+              <!-- value = classroom_id, then [1] and [2] are yeargroup and subject -->
+              <option value={{classroom_miniarray[0]}}>{{classroom_miniarray[1]}} - {{classroom_miniarray[2]}}</option>
+            {% endfor %}
+          </select>
+          <a href={{ url_for('create_classroom') }}><small>Or create a new classroom</small></a>
+        </div>
 
+        <div  class='margin--20'>
+          Select exercise:
+          <select id='exercise_id_select'>
+            {% for exercise in exercise_array %}
+              <option value={{exercise['_id']}}>{{exercise['dict']['exercise_title_visible']}}</option>
+            {% endfor %}
+          </select>
+          <a href='/'><small>Preview exercise</small></a>
+           | 
+          <a href='/'><small>Exercise explorer (coming soon)</small></a>
+        </div>
 
-<a href='/'><small>Preview exercise</small></a>
- | 
-<a href='/'><small>Exercise explorer (coming soon)</small></a>
+        <div class='margin--20'>
+          Attempts required:
+          <select id='attempts_required_select'>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+          </select>
+        </div>
 
-<br><br>
-<p>Attempts required: </p>
-<select id='attempts_required_select'>
-  <option value="5">5</option>
-  <option value="10">10</option>
-  <option value="15">15</option>
-  <option value="20">20</option>
-</select>
+        <div class='margin--20'>
+          Date due: <input type="date" id="date_due_input">
+        </div>
 
-<br>
-<p>Date due: <input type="date" id="date_due_input"></p>
+        <div class='margin--20'>
+          <b id='advanced_options_toggle'>Show advanced options (TODO)</b>
+          <div id='advanced_options_container' class='initially-hidden'>
+            <div id='include_exclude_pupils_container'>
+              <div id='include_exclude_toggle_container'>
+                <input type="radio" name="include_exclude" value="include" checked>Include:
+                <input type="radio" name="include_exclude" value="exclude">Exclude:
+              </div>
+              <div id='pupil_list_container'>
+               <input type='input' placeholder='Type pupil names (select class first)'></input>
+              </div>
+            </div>
+            <div id='date_set_container'>
+              <p>Date set - if you would like to set homework for a date that isn't today (i.e. in the future), you can do this here:</p>
+              <input type="date" id="date_set_input">
+            </div>
+          </div>
+      <!-- allow dates on non-chrome: http://code.tutsplus.com/tutorials/quick-tip-create-cross-browser-datepickers-in-minutes--net-20236 -->
+        </div>  <!-- advanced options div -->
 
-<br>
-	<b id='advanced_options_toggle'>Show advanced options</b>
-  <div id='advanced_options_container' class='initially-hidden'>
-    <div id='include_exclude_pupils_container'>
-      <div id='include_exclude_toggle_container'>
-    	  <input type="radio" name="include_exclude" value="include" checked>Include:
-        <input type="radio" name="include_exclude" value="exclude">Exclude:
-      </div>
-      <div id='pupil_list_container'>
-  	   <input type='input' placeholder='Type pupil names (select class first)'></input>
-      </div>
-    </div>
-    <div id='date_set_container'>
-      <p>Date set - if you would like to set homework for a date that isn't today (i.e. in the future), you can do this here:</p>
-      <input type="date" id="date_set_input">
-    </div>
+    </div>  <!-- end create homework main div -->
+    
+  </div>  <!-- end rounded container -->
+  
+  <div class='container box-shadow--8dp background-grey rounded-bottom-corners padding--20'>
+    <button id='create_homework_button' class='btn-success btn pull-right'>Set homework</button>
   </div>
-<!-- allow dates on non-chrome: http://code.tutsplus.com/tutorials/quick-tip-create-cross-browser-datepickers-in-minutes--net-20236 -->
 
-<br>
-<button id='create_homework_button'>Set homework</button>
+</div> <!-- end container -->
+
 
 {% endblock %}
 

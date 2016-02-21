@@ -50,7 +50,7 @@ String.prototype.format = function() {
     	var regexp = new RegExp('\\{'+key+'\\}', 'gi');
     	if (key.substring(0, 3) == 'ans' && show_answer == false) {
     		// Replace answer with a box for pupil to type into
-    		formatted = formatted.replace(regexp, '<input class="dotted" id='+key+' data-already-answered="false">');
+    		formatted = formatted.replace(regexp, '<input id='+key+' data-already-answered="false">');
     	}
     	else {
     		// Insert value into the string
@@ -76,7 +76,7 @@ function format_strings(string_key, show_answer) {
 		var img_re = /img_?(\d+)/i
 		var result = text_string.match(img_re)
 		if (result) {
-			output.push('<div><img class="img-responsive" src="../static/img/exercises/angles180/{img_X}_l{L}q{Q}.jpg"></img></div>'.format(
+			output.push('<div><img src="../static/img/exercises/angles180/{img_X}_l{L}q{Q}.jpg"></img></div>'.format(
 				{'L':level_number, 'Q':question_number, 'img_X':result[0]}
 				))
 			// output.push('<img src="../static/img/exercises/angles180/{img_X}_l{L}q{Q}.jpg"></img>'.format(
@@ -216,22 +216,6 @@ function update_progress_section() {
 	$('#questions_attempted_total_count').text(questions_attempted_count)
 	$('#questions_correct_required').text(questions_correct_required)
 	$('#question_attempts_required').text(question_attempts_required)
-
-	// http://jsfiddle.net/5w5ku/1/
-	var $bar = $('#progress_complete');
-	var progress_fraction = questions_attempted_count/question_attempts_required*100
-	$bar.attr('style', 'width:'+progress_fraction+'%');
-
-	var $bar = $('#progress_correct');
-	var progress_fraction = questions_correct_total_count/question_attempts_required*100
-	$bar.attr('style', 'width:'+progress_fraction+'%');
-
-	var $bar = $('#progress_incorrect');
-	var progress_fraction = questions_incorrect_total_count/question_attempts_required*100
-	$bar.attr('style', 'width:'+progress_fraction+'%');
-	//$bar.width(progress_fraction);
-	//console.log("Updated bar to ", progress_fraction)
-	//$bar.text($bar.width() / 4 + "%");
 }
 
 function hide_or_show_display_format_titles() {
@@ -260,22 +244,12 @@ function create_reset_exercise_button() {
 	// Reset button
 	if(exercise_status == 'revision') {
 		//$('button#reset_revision').show() <-- already if statement in HTML
-		$('#reset_revision').click( function() {
+		$('button#reset_revision').click( function() {
 			stage = 'end_of_homework'
 			save_progress()
 			location.reload();
 		})
 	}
-}
-
-function set_exercise_title() {
-	$('#exercise_title_visible').text(exercise_title_visible)
-}
-
-function page_load_set_up_visual_elements() {
-	create_reset_exercise_button()
-	set_exercise_title()
-
 }
 
 // =================== Hint =====================
@@ -288,7 +262,6 @@ function prepare_hint_button() {
 		var hint_text = generate_formatted_array('hint')[0]
 		hint_used = 'hint'
 		alert(hint_text)
-		console.log("FELT A CLICK ON HINT")
 	})
 }
 
@@ -440,12 +413,11 @@ function bind_check_button(question_number) {
 		update_temp_score_array(score)
 		temp_answer_array.push(attempted_answer)
 		show_commentary(commentary_line_1, commentary_line_2)
-		update_commentary_colour(score)
 
 		// Check if mid-question (i.e. scaffold) - don't change question
 		if (last_line_answered()=="false") {
 			// Don't do anything
-			debug('Last line not yet answered')
+			console.log('Happy days')
 		}
 		// If not a worked example, save the progress (for worked example we do this on continue click)
 		else if(['start','worked'].indexOf(display_format) == -1) {
@@ -636,14 +608,11 @@ function continue_next_question() {
 	array_to_hidden_divs('content_area_body', question)
 	show_latest_question('content_area_body')
 	prepare_check_button()
-	reset_commentary_colour()
-
 }
 
 function continue_same_question() {
 	console.log("Continuing same question")
 	prepare_check_button()
-	reset_commentary_colour()
 	show_latest_question('content_area_body')
 }
 
@@ -713,28 +682,6 @@ function show_commentary(commentary_line_1, commentary_line_2) {
 function clear_commentary() {
 	$('#commentary_line_1').empty()
 	$('#commentary_line_2').empty()
-}
-
-function update_commentary_colour(score) {
-	// Make it red if score=0
-	// Make it green otherwise
-	// See reset_commentary_colour to turn back to grey
-	if (score == 0) {
-	$('#commentary_and_button_container')
-		.removeClass('background-blue background-green background-red background-grey')
-		.addClass('background-red')	
-	}
-	else {
-	$('#commentary_and_button_container')
-		.removeClass('background-blue background-green background-red background-grey')
-		.addClass('background-green')
-	}
-}
-
-function reset_commentary_colour() {
-	$('#commentary_and_button_container')
-		.removeClass('background-blue background-green background-red background-grey')
-		.addClass('background-grey')
 }
 
 // =================== Starting a new level ===================
@@ -914,7 +861,7 @@ var temp_answer_array = []  // For storing answers given to each question
 //var level_hash_list = from html template via Jinja
 var max_level_number = (level_hash_list.length)-1
 var level_number = 0
-page_load_set_up_visual_elements()
+create_reset_exercise_button()
 load_progress_as_of_last_saved()
 get_level_from_db_and_start_level(level_hash_list[level_number])
 

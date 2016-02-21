@@ -14,30 +14,23 @@ Sign up for an account
 {% block body %}
 {{ super() }}
 
-<div class='row'>
-    <div class="col-sm-2">
-      <h3>
-        Login
-      </h3>      
-      <input id='login_username_input' placeholder='Username or email'></input>
-      <input id='login_password_input' type='password' placeholder='Password'></input>
-      <button id='login_button'>Login</button>
-    </div>
-</div>
+<div class='container'>
+  {% include 'login_widget.html' %}
 
-<div class='row' id='xx'>
-    <div class="col-sm-8">
-      <h2>
-        Sign up for an independent student account
-      </h2>
-      <input id='signup_email_input' placeholder='Email'></input><br>
-      <input id='signup_password_input' type='password' placeholder='Password'></input><br>
-      <input id='signup_firstname_input' placeholder='First name'></input><br>
-      <input id='signup_surname_input' placeholder='Surname'></input><br>
-      <button id='signup_button'>Signup</button>
-    </div>
-</div>
+  <div class='row' id='xx'>
+      <div class="col-sm-8">
+        <h2>
+          Sign up for an independent student account
+        </h2>
+        <input id='signup_email_input' placeholder='Email'></input><br>
+        <input id='signup_password_input' type='password' placeholder='Password'></input><br>
+        <input id='signup_firstname_input' placeholder='First name'></input><br>
+        <input id='signup_surname_input' placeholder='Surname'></input><br>
+        <button id='signup_button' class='btn btn-success margin-top--10'>Signup</button>
+      </div>
+  </div>
 
+</div>  <!-- end container -->
 
 {% endblock %}
 

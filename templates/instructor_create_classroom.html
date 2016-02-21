@@ -14,25 +14,41 @@ Create classroom
 {% block body %}
 {{ super() }}
 
-<h2>Hello {{ session.user.firstname }}!</h2>
-<p>Here we can create a class. This will be a selection of pupils who you will want to regularly set homework for.</p>
+<div class='container'>
+	<h3>Create a class</h3>
+	<p>Once a class is created, you can easily set exercises and track progress for this group of pupils.</p>
 
-<div id='create_classroom_view'>
-	<b>Create a name for your class:</b>
-	<p>Year or class name: <input id='class_name_input' type='text' placeholder='e.g. Year 9 Set 1'></p>
-	<p>Subject: <input id='subject_input' type='text' placeholder='e.g. Maths'></p>
-	<h3>
-	  Class name:
-	    <b>
-	      <span id='class_name_preview'></span> - <span id='subject_preview'></span>
-	    </b>
-	</h3>
-	<button id='create_classroom_button'>Create class</button>
-</div>
+	<div class='container box-shadow--8dp rounded-top-corners padding--20'>
+		<div id='create_classroom_view'>
+			<div class='row'>
+				<div class='col-xs-6 col-sm-4 text-center'>
+					<h4>Year/set:</h4>
+					<input id='class_name_input' type='text' placeholder='e.g. Year 9 Set 1'></p>
+				</div>
 
-<div id='classroom_created_success_view' class='initially-hidden'>
-	<br><br><b>Congratulations, your class is created. Your students can join the class using code <span id='classroom_code'></span>.</b>
-</div>
+				<div class='col-xs-6 col-sm-4 text-center'>
+					<h4>Subject:</h4>
+					<input id='subject_input' type='text' placeholder='e.g. Maths'></p>
+				</div>
+
+				<div class='col-xs-12 col-sm-4 text-center'>
+					<h4>Class will be known as:</h4>
+					<h3><span id='class_name_preview'></span> - <span id='subject_preview'></span></h3>
+				</div>
+			
+			</div>
+		</div>  <!-- end create classroom preview box -->
+
+		<div id='classroom_created_success_view' class='initially-hidden text-center'>
+			<h4>Congratulations, your class is created. Your students can join the class using the code:</h4>
+				<h2><span id='classroom_code'></span></h2>
+		</div>
+		
+	</div>  <!-- end rounded container -->
+	<div class='container box-shadow--8dp background-grey rounded-bottom-corners padding--20'>
+		<button id='create_classroom_button' class='btn-success btn pull-right'>Create class</button>
+	</div>
+</div> <!-- end container -->
 
 {% endblock %}
 

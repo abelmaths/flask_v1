@@ -43,6 +43,12 @@
           <a href={{ url_for('set_exercise') }}>Set homework</a> 
         </li>
         {% endif %} <!-- if teacher -->
+        {% if session.user.is_admin %}
+        <li>
+          <a href={{ url_for('level_test_uploader') }}>Upload level (ADMIN ONLY)</a>
+        </li>
+        {% endif %}
+        
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>

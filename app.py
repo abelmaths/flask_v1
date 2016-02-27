@@ -14,8 +14,9 @@ Immediate to do list
 --Any tweaks to login/signup functionality. Add a 'home' logo
 --Make top bar nicer
 --Create 'join class' page for logged in pupil
-Formatting in exercise - make fonts right size, highlight question being asked etc.
+--Formatting in exercise - make fonts right size, highlight question being asked etc.
 Do a check to set max limit on questions if exercise is short
+Upload questions
 SEND TO WOODY
 Refactor code to make all consistent and DRY
 Put progress bars and statuses in appropriate tables to make visually better
@@ -133,6 +134,20 @@ def home():
         return redirect(url_for('pupil_all_exercises'))
     else:
         debug('Unknown USER state within home()')
+
+@app.route('/level_test_uploader', methods=['GET', 'POST'])
+def level_test_uploader():
+    if request.method == 'POST':
+        variables = request.files['variables']
+        skeleton = request.files['skeleton']
+        exercise_title_visible = request.form['exercise_title_visible']
+        exercise_description = request.form['exercise_description']
+        from level_test_uploader import test_uploader
+        test_uploader(variables, skeleton, exercise_title_visible, exercise_description)
+        flash('Attempted to create exercise. Set exercise for pupil to see if successful.')
+        return redirect(url_for('home'))
+
+    return render_template('level_test_uploader.html')
 
 def display_pct(number):
     """

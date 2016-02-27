@@ -28,7 +28,7 @@ When you come back to the homework after a break, it should be able to load the 
 from mongo_setup import *
 from werkzeug.security import generate_password_hash
 #from mongo_general import *
-run_demo = False
+run_demo = True
 
 
 #################### CLASSES ####################
@@ -104,6 +104,12 @@ class User:
 		Returns if user is a teacher
 		"""
 		return self.D.get('is_teacher')
+
+	def is_admin(self):
+		"""
+		Returns if user is admin
+		"""
+		return self.D.get('is_admin')
 
 	def add_classroom(self, classroom):
 		"""
@@ -247,7 +253,7 @@ class User:
 		Returns all info that is to be saved on the session cookie
 		"""
 		try:
-			keys = ['display_name', '_id', 'is_teacher', 'firstname', 'surname', 'username']
+			keys = ['display_name', '_id', 'is_teacher', 'firstname', 'surname', 'username', 'is_admin']
 			# Need to make the _id a string
 			return {k : self.D[k] if k!='_id' else str(self.D[k]) for k in keys}		
 		except:
@@ -1047,7 +1053,7 @@ def create_classroom(teacher_object, subject_name, yeargroup_name):
 	_ = save_object(classroom, collection_name = 'classrooms')
 	return _.inserted_id, classroom.get_entry_code()
 
-def create_user(username, firstname, surname, password, is_teacher, display_name=None, email=None, confirmed=False):
+def create_user(username, firstname, surname, password, is_teacher, display_name=None, email=None, confirmed=False, is_admin=False):
 	"""
 	Create a new user object
 	"""
@@ -1061,7 +1067,8 @@ def create_user(username, firstname, surname, password, is_teacher, display_name
 			'password_hash':generate_password_hash(password),
 			'classrooms':[],
 			'homeworks':{},
-			'is_teacher':is_teacher
+			'is_teacher':is_teacher,
+			'is_admin':is_admin,
 		}
 	)
 	user.set_display_name(display_name)
@@ -1152,66 +1159,35 @@ if __name__ == "__main__":
 
 		# Create some pupils
 		password='123'
-		create_user('davidabelman', 'David', 'Abelman', password=password, display_name = None, is_teacher=False)
-		create_user('tonyblair', 'Tony', 'Blair', password=password, display_name = None, is_teacher=False)
-		create_user('adamguy', 'Adam', 'Guy', password=password, display_name = None, is_teacher=False)
-		create_user('woodylewenstein', 'Woody', 'Lewenstein', password=password, display_name = None, is_teacher=False)
+		create_user('davidabelman', 'David', 'Abelman', password=password, display_name = None, is_teacher=False, is_admin=True)
+		create_user('woodylewenstein', 'Woody', 'Lewenstein', password=password, display_name = None, is_teacher=False, is_admin=True)
 		create_user('annieabelman', 'Annie', 'Abelman', password=password, display_name = None, is_teacher=False)
-		create_user('anniehughes', 'Annie', 'Hughes', password=password, display_name = None, is_teacher=False)
-		create_user('benabelman', 'Ben', 'Abelman', password=password, display_name = None, is_teacher=False)
 
 		# Create some teachers
-		create_user('dennehy1234', 'A', 'Dennehy', password=password, display_name = 'Miss Dennehy', is_teacher=True, email='davidabelman+dennehy1234@gmail.com')
-		create_user('asher999', 'Tony', 'Asher', password=password, display_name = 'Sir Asher', is_teacher=True, email='davidabelman+asher999@gmail.com')
+		create_user('teacher', 'Bob', 'Teacher', password=password, display_name = 'Mr Teacher', is_teacher=True, email='davidabelman+teacher@gmail.com')
 
 		# Make teacher create a class each
 		_id_class1, entry_code_1 = create_classroom(
-			teacher_object = load_by_username('asher999'),
+			teacher_object = load_by_username('teacher'),
 			subject_name = 'Mechanics',
 			yeargroup_name = 'Year 11'
-			)
-		_id_class2, entry_code_2 = create_classroom(
-			teacher_object = load_by_username('dennehy1234'),
-			subject_name = 'Pure',
-			yeargroup_name = 'Year 11'
-			)
-		_id_class3, entry_code_3 = create_classroom(
-			teacher_object = load_by_username('asher999'),
-			subject_name = 'Stats',
-			yeargroup_name = 'Year 12'
 			)
 
 		# Pupils add themselves to classes
 		classroom_1 = load_by_id(_id_class1, 'classrooms')
-		for u in ['adamguy', 'davidabelman', 'woodylewenstein', 'annieabelman', 'benabelman']:
+		for u in ['davidabelman', 'woodylewenstein', 'annieabelman']:
 			pupil = load_by_username(u)
 			if pupil.D:
 				pupil_joins_classroom(pupil, classroom_1)
-		classroom_2 = load_by_id(_id_class2, 'classrooms')
-		for u in ['tonyblair', 'davidabelman', 'arong', 'annieabelman', 'adamguy']:
-			pupil = load_by_username(u)
-			if pupil.D:
-				pupil_joins_classroom(pupil, classroom_2)
-		classroom_3 = load_by_id(_id_class3, 'classrooms')
-		for u in ['tonyblair', 'davidabelman', 'arong', 'annieabelman', 'adamguy']:
-			pupil = load_by_username(u)
-			if pupil.D:
-				pupil_joins_classroom(pupil, classroom_3)
 
 		# Teacher sets a homework
 		exercise_object = load_by_id(
 			db['exercises'].find_one({'dict.exercise_name_unique':'angles180'})['_id'],
 			'exercises')
 		classroom_object = load_by_id(_id_class1, 'classrooms')
-		teacher_object = load_by_username('asher999')
+		teacher_object = load_by_username('teacher')
 		create_homework(exercise_object, classroom_object, teacher_object, date_set='2015-11-11', date_due='2015-12-12')
 
-		exercise_object = load_by_id(
-			db['exercises'].find_one({'dict.exercise_name_unique':'angles180'})['_id'],
-			'exercises')
-		classroom_object = load_by_id(_id_class3, 'classrooms')
-		teacher_object = load_by_username('asher999')
-		create_homework(exercise_object, classroom_object, teacher_object, date_set='2015-11-11', date_due='2016-01-10')
 
 	# Take a look at the databases!
 	for collection_name in ['users', 'classrooms', 'homeworks', 'exercises', 'submissions']:

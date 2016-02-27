@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<script>
+</script>
+{% endblock %}
+
+{% block title %}
+{{ super() }}
+Upload for level testing
+{% endblock %}
+
+{% block body %}
+{{ super() }}
+
+<div class='container'>
+	<h1>Upload a file to test a level functionality</h1>
+	<p>Note that only a single skeleton and corresponding variables can be uploaded here, for testing purposes.</p>
+    <form action="" method=post enctype=multipart/form-data>
+      <p><h3>Skeleton CSV:</h3>
+      	<input type=file name=skeleton>
+      <h3>Variables CSV:</h3>
+      	<input type=file name=variables>
+      <h3>Exercise title:</h3>
+      	<input type=text name=exercise_title_visible>
+      <h3>Exercise description:</h3>
+      	<input type=text name=exercise_description>
+      <br><br><input type=submit value='Create exercise' class='btn btn-info'>
+    </form>
+</div>
+
+{% endblock %}
+
+{% block scripts_bottom %}
+  {{ super() }}
+  <script></script>
+{% endblock %}
+

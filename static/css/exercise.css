@@ -9,7 +9,7 @@
 
 .active-question-line {
 	font-weight: bold;
-	/*background:#fff2b2 !important;*/
+	/*background:#fff2b2 !important;*/ /* <--- highlight the active line with yellow*/
 }
 
 .inactive-question-line {

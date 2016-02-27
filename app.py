@@ -6,38 +6,52 @@
 7th March - make it look pretty, look into dynatable, add loads of validation checks in JS (are all fields filled, are usernames valid, do dates make sense)
 Afterwards - consider multiple choice, how to generate images, etc.
 
-Visual things to do:
+Immediate to do list
+================================
 --Dynatable
 --Create classroom and set homework page
-Home page and login page
-Top bar
-
-Backend things to do:
-Finish class joining and signup flow
-Flash messages within signup
 --Create homework flash message
+--Any tweaks to login/signup functionality. Add a 'home' logo
+--Make top bar nicer
+--Create 'join class' page for logged in pupil
+Formatting in exercise - make fonts right size, highlight question being asked etc.
+Do a check to set max limit on questions if exercise is short
+SEND TO WOODY
+Refactor code to make all consistent and DRY
+Put progress bars and statuses in appropriate tables to make visually better
 
-Mini things todo:
-Change classroom name in DB to not include teacher's name
-Fix login section on all pages where it shows (refactor code to appear in its own template with associated JS)
-_pupil_join_classroom_confirm and _create_pupil_via_school have repetitive code
-Generate tables using dynatable - deal with dates in this part
-Once datepicker sorted, make default value for hwk set = Now (or have it blank and do it in Python)
-Count wrong attempts for people trying to join a classroom
-Make classroom codes longer/harder but still simple to type. Make sure there are no duplicates when code is generated.
-Add expiration date to classroom code?
-Add settings for a teacher to remove pupil, delete a homework, edit date due for homework, reset pupil passwords
-Make login use a form rather than jquery? Hash password? See: http://stackoverflow.com/questions/17248888/how-to-redirect-with-flask-and-jquery
-Add flash message to hide_body_and_redirect in base.js (i.e. when something has happened, want to give flash message as feedback on redirect)
-Create homework - advanced options (include/exclude pupils, date set)
 
 Views to complete:
+===============================
 Filter pupils by class when seeing 'pupil view' from class view
 Filter exercises by class when seeing 'exercise view' from class view
 Select correct class when clicking 'set exercise' in class view
 Settings for teacher
 Settings for pupil
 Existing pupil join a classroom
+Design nice enough looking homepage
+
+Other things todo:
+================================
+* Change classroom name in DB to not include teacher's name
+* check I have Fixed login section on all pages where it shows (refactor code to appear in its own template with associated JS)
+* Deal with dates displayed in datatables, and datepicker
+* _pupil_join_classroom_confirm and _create_pupil_via_school have repetitive code
+* Allow teacher to see pupil's attempt at an exercise
+* Allow teacher to preview exercise
+* Once datepicker sorted, make default value for hwk set = Now (or have it blank and do it in Python)
+
+Things to alter once in testing
+================================
+Redo pupil's view into cards(?) to make nicer
+Explore bootstrap themes for visual niceness
+Count wrong attempts for people trying to join a classroom
+Make classroom codes longer/harder but still simple to type. Make sure there are no duplicates when code is generated.
+Add expiration date to classroom code?
+Add settings for a teacher to remove pupil, delete a homework, edit date due for homework, reset pupil passwords
+Make login use a form rather than jquery? Hash password? See: http://stackoverflow.com/questions/17248888/how-to-redirect-with-flask-and-jquery
+Create homework - advanced options (include/exclude pupils, date set)
+
 """
 
 from flask import Flask, url_for, render_template, request, session, redirect, flash
@@ -242,6 +256,8 @@ def signup_pupil_into_classroom(entry_code):
     But count wrong attempts (for logged in or anon user) and block if too many
     """
 
+    debug("Trying to enter class with entry code:{}".format(entry_code))
+
     classroom = mongo.load_by_arbitrary({'entry_code':entry_code}, 'classrooms')
     if not classroom.exists():
         flash('Sorry, this classroom does not exist')
@@ -254,7 +270,7 @@ def signup_pupil_into_classroom(entry_code):
             return redirect(url_for('pupil_all_exercises'))
         else:
             # Show confirmation page for pupil to confirm entry to class
-            return render_template('pupil_join_classroom.html',
+            return render_template('pupil_join_classroom_confirm.html',
                 entry_code=entry_code,
                 teacher_name=classroom.get_teacher_name(),
                 classroom_name=classroom.get_classroom_name()
@@ -651,6 +667,22 @@ def pupil_progress():
     return """
     My progress - topline stats, questions attempted/answered, a chart, medals
     """
+
+@app.route('/my_classes')
+@login_required
+def pupil_classes():
+    return """
+    My progress - topline stats, questions attempted/answered, a chart, medals
+    """
+
+@app.route('/join_class')
+@login_required
+def pupil_join_class_interface():
+    """
+    Interface for pupil to add classroom code when logged in already
+    in order to join a classroom
+    """
+    return render_template('pupil_join_classroom_interface.html')
 
 #################################### EXERCISE ####################################
 @app.route('/exercise/<homework_id>')

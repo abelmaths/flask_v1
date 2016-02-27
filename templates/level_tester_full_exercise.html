@@ -14,6 +14,7 @@
 	var exercise_status = {{exercise_status|tojson}}
 	var homework_id = {{homework_id|tojson}}
 </script>
+<link href="{{url_for('static', filename = 'css/exercise.css')}}" rel="stylesheet">
 {% endblock %}
 
 {% block title %}
@@ -56,15 +57,25 @@ Questions
 		</div>
 		{% endif %}
 
-
 	  	<div class="row">
-				<div id='optional_question_area' class='col-sm-6' >
-					<div><strong id='optional_question_area_title'>Original question:</strong></div>
-					<div><em id='optional_question_area_body'></em></div>
+				<div id='original_question_area' class='col-sm-6 dashed-outline padding--10  margin-top--10' >
+					<div>
+						<strong id='original_question_area_title'>
+							<!-- Original question -->
+						</strong>
+					</div>
+					<div class='padding--10'>
+						<div id='original_question_area_body'></div>
+					</div>
 				</div>
-				<div id='content_area' class='col-sm-6'>
-					<div><strong id='content_area_title'>Let's break it down:</strong></div>
-					<div id='content_area_body'></div>
+				<div id='content_area' class='col-sm-6 padding--10'>
+					<!-- <div>
+						 <strong id='break_it_down_title'>
+							Let's break it down:
+						</strong>
+					</div> -->
+					<div id='content_area_body' class='padding--10'>
+					</div>
 				</div>
 		</div>
 

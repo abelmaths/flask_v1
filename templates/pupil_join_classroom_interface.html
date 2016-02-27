@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<script>
+</script>
+{% endblock %}
+
+{% block title %}
+{{ super() }}
+Join classroom
+{% endblock %}
+
+{% block body %}
+{{ super() }}
+
+<div class='container'>
+	<p>If your teacher has given you a code to join a class, you can enter it here</p>
+	<div>
+		Code <input type='text' placeholder='' id='entry_code_input'></input>
+	
+		<button id='submit_entry_code_button' class='btn btn-success'>Submit</button>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block scripts_bottom %}
+  {{ super() }}
+  <script src="{{url_for('static', filename = 'js/pupil_join_classroom_interface.js', _external=True)}}"></script>
+{% endblock %}
+

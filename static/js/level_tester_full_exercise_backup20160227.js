@@ -39,7 +39,7 @@ String.prototype.format = function() {
     	var regexp = new RegExp('\\{'+key+'\\}', 'gi');
     	if (key.substring(0, 3) == 'ans' && show_answer == false) {
     		// Replace answer with a box for pupil to type into
-    		formatted = formatted.replace(regexp, '<input class="dotted-input" id='+key+' data-already-answered="false">');
+    		formatted = formatted.replace(regexp, '<input class="dotted" id='+key+' data-already-answered="false">');
     	}
     	else {
     		// Insert value into the string
@@ -133,8 +133,7 @@ function array_to_hidden_divs(parent_id, array) {
 		// Add a div
 		$('<div/>', {
 		    id: 'line_'+i,
-		    hidden: "hidden",
-		    class: 'padding--10'
+		    hidden: "hidden"
 		}).appendTo('#'+parent_id);	
 
 		// Within the div, add text in a div
@@ -165,7 +164,6 @@ function show_latest_question(parent_id) {
 		// Show the div if no input found yet
 		if (found_latest_input == false) {
 			$(this).show()	
-			$(this).addClass( "inactive-question-line" )
 		}
 		
 		// Check if input required in this line
@@ -174,8 +172,6 @@ function show_latest_question(parent_id) {
 			// There is an input in this line
 			if($(line.find('input')[0]).attr('data-already-answered')=='false') {
 				found_latest_input = true;	
-				$(this).addClass( "active-question-line" )
-				$(this).removeClass( "inactive-question-line" )
 			}			
 		}		
 	})
@@ -185,15 +181,15 @@ function show_question_if_scaffold() {
 	// If scaffold, show all but last line of question
 	// TODO: make more robust in case last line of question isn't the answer? Or just enforce this?
 	if(['scaffold','worked'].indexOf(display_format) !== -1) {
-		$('#original_question_area_body').empty()
+		$('#optional_question_area_body').empty()
 		var question = generate_formatted_array('question')
 		for (var i=0; i<question.length-1; i++) {
-			$('#original_question_area_body').append(question[i])
-			// $('#original_question_area_body').append('<br><br>')
+			$('#optional_question_area_body').append(question[i])
+			$('#optional_question_area_body').append('<br><br>')
 		}
 	}
 	else {
-		$('#original_question_area_body').empty()
+		$('#optional_question_area_body').empty()
 	}
 }
 
@@ -230,12 +226,12 @@ function update_progress_section() {
 function hide_or_show_display_format_titles() {
 	// Hide or show the original question (if scaffold question, we need to show it)
 	if(['start','worked', 'scaffold'].indexOf(display_format) !== -1) {
-		$('#original_question_area').show()
-		$('#break_it_down_title').show()
+		$('#optional_question_area').show()
+		$('#content_area_title').show()
 	}
 	else {
-		$('#original_question_area').hide()
-		$('#break_it_down_title').hide()
+		$('#optional_question_area').hide()
+		$('#content_area_title').hide()
 	}
 }
 

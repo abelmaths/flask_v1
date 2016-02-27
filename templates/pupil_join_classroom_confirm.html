@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<script>
+  var entry_code = {{entry_code|tojson}}
+</script>
+{% endblock %}
+
+{% block title %}
+{{ super() }}
+Exercises
+{% endblock %}
+
+{% block body %}
+{{ super() }}
+
+<div class='container'>
+	<h3>{{session.user.firstname}}, please confirm you would like to join {{teacher_name}}'s classroom, {{classroom_name}}?</h3>
+	<button id='join_classroom_button' class='btn btn-success'>Yes</button>
+	<button id='no_join_classroom_button' class='btn btn-default'>Cancel</button>
+</div>
+
+{% endblock %}
+
+{% block scripts_bottom %}
+  {{ super() }}
+  <script src="{{url_for('static', filename = 'js/pupil_join_classroom_confirm.js', _external=True)}}"></script>
+{% endblock %}
+

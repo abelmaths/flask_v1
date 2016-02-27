@@ -128,12 +128,13 @@
 }
 
 
-.dotted
+.dotted-input
 {
     border:0;
     border-bottom: 2px dotted;
     /*background-color: #ccf2ff;*/
     margin: 4px;
+    background-color: transparent !important;
 }
 
 /*Filtering info at bottom of datatable*/
@@ -150,3 +151,10 @@
 /*.dataTable {
 	text-align: center !important;
 }*/
+
+
+.navbar {
+	background-color: #cef6ff !important;
+}
+
+

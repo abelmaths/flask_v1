@@ -1,0 +1,20 @@
+#original_question_area_body {
+	/*color: #888 !important;*/
+	opacity: 0.6;
+}
+
+.dashed-outline {
+    border:1px dashed #ccc;
+}
+
+.active-question-line {
+	font-weight: bold;
+	/*background:#fff2b2 !important;*/
+}
+
+.inactive-question-line {
+	font-weight: normal;
+	background:#fff !important;
+}
+
+
